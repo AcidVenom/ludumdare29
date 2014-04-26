@@ -39,17 +39,15 @@ var Game = {
 
             Game.sort();
 
-            //Game.PIXI.Camera._bounds.width = 1280;
-            //Game.PIXI.Camera._bounds.height = 720;
-            Game.PIXI.Camera.pivot.x = 0.5;
-            Game.PIXI.Camera.pivot.y = 0.5;
-
             Game.PIXI.Stage.addChild(Game.PIXI.Camera);
 
             requestAnimationFrame(Game.update);
         });
 
         Game.PIXI.Loader.load();
+
+        Game.PIXI.Camera.position.x = Game.PIXI.Renderer.width/2;
+        Game.PIXI.Camera.position.y = Game.PIXI.Renderer.height/2;
 
         window.addEventListener('resize', Game.resizeGame, false);
         window.addEventListener('orientationchange', Game.resizeGame, false);

@@ -12,8 +12,8 @@ var World = function()
     this.pivot.x = 0.5;
     this.pivot.y = 0.5;
 
-    this.position.x = Game.PIXI.Renderer.width / 2;
-    this.position.y = Game.PIXI.Renderer.height / 2;
+    this.position.x = 0;
+    this.position.y = 0;
 
     Game.PIXI.Camera.addChild(this);
 }
