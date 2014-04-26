@@ -26,7 +26,7 @@ var Miner = function (angle, world, hotspot) {
 	this.pivot.y = 0.5;
 
 	this.speed = 0;
-	this.maxSpeed = 3;
+	this.maxSpeed = 7;
 
 	this.jumpHeight = -10;
 
@@ -51,6 +51,26 @@ var Miner = function (angle, world, hotspot) {
 	});
 	this.animations.play('walk');
 
+
+	this.setTexture(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprMinerWalk.png']);
+
+	var frames = [];
+	for(var i = 0; i < 16; i++)
+	{
+		frames.push({
+			x: i*268,
+            y: 0,
+            width: 268,
+            height: 320
+		});
+	}
+	this.animations.add("mine",{
+        frameRate: 0.1,
+        frames: frames,
+        loop: true,
+        reversed: false
+	});
+
 	this.velocity = this.jumpHeight;
 	this.radius--;
 
@@ -71,16 +91,60 @@ var Miner = function (angle, world, hotspot) {
 			this.angle = 360;
 		}
 
+<<<<<<< HEAD
+=======
+		this.targeted = this.isMinerTargeted();
+
+		if (!this.targeted) {
+			this.speed = 0;
+
+			this.animations.play('mine');
+		} else {
+			var dist = Math.abs(this.targeted.angle - this.angle);
+			if(dist < 0) {
+				if(this.speed > 0)
+				{
+					this.speed = 0;
+				}
+				if (this.speed > -this.maxSpeed)
+				{
+					this.speed-=0.5;
+				}
+			}
+			else if(dist > 0)
+			{
+				
+				if(this.speed < 0)
+				{
+					this.speed = 0;
+				}
+				if (this.speed < this.maxSpeed)
+				{
+					this.speed+=0.5;
+				}
+			}
+
+			if (this.speed > 0) {
+				this.scale.x = -0.25;
+				this.scale.y = -0.25;
+			} else if (this.speed < 0) {
+				this.scale.x = 0.25;
+				this.scale.y = -0.25;
+			}
+		}
+
+>>>>>>> ea1d6cd97802cda57e2bc39fea84eae3783a87ae
 		if(this.speed == 0)
 		{
-			this.animations.pause("walk");
+			this.animations.pause('walk');
 		}
 		else
 		{
-			this.animations.resume("walk");
+			this.animations.resume('walk');
 		}
 
 		var wobble = Math.sin(this.angle*Math.PI/180*50);
+
 
 		this.position.x = this.world.position.x + Math.cos(this.angle * Math.PI / 180) * this.radius;
 		this.position.y = this.world.position.y + Math.sin(this.angle * Math.PI / 180) * (this.radius + wobble*4);
