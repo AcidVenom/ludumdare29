@@ -30,48 +30,6 @@ var Miner = function (angle, world, hotspot) {
 
 	this.jumpHeight = -10;
 
-	// AI variables
-	this.AI = {};
-	this.AI.currentState = null;
-	this.AI.currentTargetAngle = null;
-	this.AI.currentTargetStepsTaken = 0;
-	this.AI.distanceToTarget = function (bool) {
-		if (this.currentTargetAngle !== null) {
-			var distToTarget;
-			if (bool) {
-				distToTarget = this.angle - this.currentTargetAngle;
-			} else {
-				distToTarget = this.angle > this.currentTargetAngle ? this.angle - this.currentTargetAngle : this.currentTargetAngle - this.angle;
-			}
-			return distToTarget;
-		}
-		return 0;
-	};
-	this.AI.calculateNextTarget = function () {
-		var distToHotspot = this.angle > this.hotspot ? this.angle - this.hotspot : this.hotspot - this.angle,
-			chance;
-
-		if (distToHotspot <= 20) {
-			chance = 90;
-		} else if (distToHotspot <= 40) {
-			chance = 70;
-		} else if (distToHotspot <= 60) {
-			chance = 50;
-		} else if (distToHotspot <= 80) {
-			chance = 20;
-		} else {
-			chance = 10;
-		}
-
-		if (Math.round(Math.random() * 100) <= chance) {
-			return (this.hotspot - 20) + Math.round(Math.random() * 40);
-		} else {
-			return (this.angle - 20) + Math.round(Math.random() * 40);
-		}
-
-		return 0;
-	};
-
 	var frames = [];
 
 	for(var i = 0; i < 8; i++)
@@ -104,23 +62,13 @@ var Miner = function (angle, world, hotspot) {
 		//console.log(this.health);
 		this.health.updateHealthbar(data);
 
-		if (this.AI.currentState !== null) {
-			switch(Math.round(Math.random() * 1)) {
-				case 0:
-					this.AI.currentState = 'idle';
-				break;
-				case 1:
-					this.AI.currentTargetAngle = this.AI.calculateNextTarget();
-					this.AI.currentState = 'targeted';
-				break;
+		if (this.isMinerTargeted()) {
+			for (var i = 0; i < StateMachine.getState().enemies.length; i++) {
+
 			}
-		} else if (this.AI.currentTargetAngle === this.angle || !this.AI.currentTargetAngle) {
-			this.AI.currentTargetAngle = this.hotspot;
-			console.log(this.AI.distanceToTarget());
 		}
 
-		if(this.AI.distanceToTarget() !== 0 && this.AI.distanceToTarget(true) <= 20) {
-			console.log(1);
+		if() {
 			if(this.speed > 0)
 			{
 				this.speed = 0;
@@ -130,9 +78,9 @@ var Miner = function (angle, world, hotspot) {
 				this.speed-=0.5;
 			}
 		}
-		else if(this.AI.distanceToTarget() !== 0 && this.AI.distanceToTarget(true) >= 20)
+		else if()
 		{
-			console.log(2);
+			
 			if(this.speed < 0)
 			{
 				this.speed = 0;
@@ -144,7 +92,6 @@ var Miner = function (angle, world, hotspot) {
 		}
 		else
 		{
-			//console.log(3);
 			if(this.speed > 0)
 			{
 				this.speed-=0.5;
