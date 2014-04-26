@@ -56,6 +56,7 @@ var Enemy = function (angle, world) {
 	this.radius--;
 
 	this.animations.play("walk");
+	this.target = undefined;
 
 	this.findNearestMiner = function()
 	{
@@ -85,7 +86,7 @@ var Enemy = function (angle, world) {
 			}
 		}
 
-		if(lowestDistance <= 200)
+		if(lowestDistance <= 300 && Math.floor(Math.random()*101) < 20 )
 		{
 			return {miner: lowestMiner, distance: lowestDistance};
 		}
@@ -109,47 +110,57 @@ var Enemy = function (angle, world) {
 		this.health.updateHealthbar(data);
 		
 
-		var target = this.findNearestMiner();
-
-		if(target && target.miner)
+		if(!this.target)
 		{
-			if(target.distance > 6)
+			this.target = this.findNearestMiner();
+		}
+
+		if(this.target && this.target.miner)
+		{
+			var dx = this.target.miner.position.x - this.position.x;
+			var dy = this.target.miner.position.y - this.position.y;
+
+			this.target.distance = Math.sqrt(dx*dx + dy*dy);
+			if(this.target.distance > 12)
 			{
-				target.miner.targeted = true;
-				if (this.angle - 180 < target.miner.angle - 180)
+				this.target.miner.targeted = true;
+				if (this.angle - 180 < this.target.miner.angle - 180)
 				{
-					this.speed = 6*data.dt;
+					this.speed = 10*data.dt;
 				}
 
-				if (this.angle - 180 > target.miner.angle - 180)
+				if (this.angle - 180 > this.target.miner.angle - 180)
 				{
-					this.speed = -6*data.dt;
+					this.speed = -10*data.dt;
 				}
 			}
 			else
 			{
 				this.speed = 0;
+				if (this.target.miner.health.__health > 0)
+					this.target.miner.health.damage();
 			}
 
-			if(target.distance > 200)
+			if(this.target.distance > 300 || Math.floor(Math.random()*101) < 2)
 			{
-				target.miner.targeted = false;
-				this.speed = 0;
+				this.target.miner.targeted = false;
+				this.target = undefined;
+				this.speed = this.speed*-1;
 			}
 		}
 		else
 		{
-			if(this.timer >= 100)
+			if(this.timer >= 1000)
 			{
-				this.move = Math.floor(Math.random()*4);
+				this.move = Math.floor(Math.random()*3);
 				switch(this.move)
 				{
 					case 0:
-					this.speed = -6*data.dt;
+					this.speed = -10*data.dt;
 					break;
 
 					case 1:
-					this.speed = 6*data.dt;
+					this.speed = 10*data.dt;
 					break;
 
 					default:

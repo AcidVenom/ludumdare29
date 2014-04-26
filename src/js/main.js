@@ -30,11 +30,11 @@ function main()
 			this.world = new World();
 			this.player = new Player(Math.random() * 360, this.world);
 			this.ui = new UI(this.stability);
-			for (var i = 0; i < 2; ++i) {
+			for (var i = 0; i < 10; ++i) {
 				this.miners.push(new Miner(Math.random() * 360, this.world, this.hotspotMiners))
 			}
 
-			for (var i = 0; i < 2; ++i) {
+			for (var i = 0; i < 10; ++i) {
 				this.enemies.push(new Enemy(Math.random() * 360, this.world, this.hotspotEnemies));
 			}
 		},
