@@ -9,7 +9,7 @@ var Player = function(x, y, cx, cy)
     this.animations = {};
 
     extend(this, sprite);
-    extend(this, Game.Object);
+    extend(this, GameObject);
     extend(this.animations, AnimationManager);
 
     this.position.x = 20;

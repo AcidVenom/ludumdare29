@@ -48,7 +48,6 @@ function require(paths, cb)
 		scriptTag.src = './src/js/' + paths[i];
 		
 		scriptTag.addEventListener('load', function () {
-			console.log("Required: " + this.src);
 			if(cb && ++loaded >= paths.length)
 			{
 				cb();
