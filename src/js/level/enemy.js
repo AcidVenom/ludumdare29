@@ -49,6 +49,9 @@ var Enemy = function (angle, world) {
 
 	this.scale.x = 0;
 	this.scale.y = 0;
+	this.move = Math.floor(Math.random()*7);
+	this.timer = 0;
+	this.newTimer = 100 + Math.random()*200;
 
 	
 
@@ -67,39 +70,51 @@ var Enemy = function (angle, world) {
 		}
 	
 		this.health.updateHealthbar(data);
-		if(Input.isDown("a"))
+
+		this.move = Math.floor(Math.random()*7)
+		this.timer++;
+
+		if(this.timer > this.newTimer)
 		{
-			if(this.speed > 0)
+			switch(this.move)
 			{
-				this.speed = 0;
+			case 0:
+				if(this.speed > 0)
+				{
+					this.speed = 0;
+				}
+				if (this.speed > -this.maxSpeed)
+				{
+					this.speed-=0.5;
+				}
+			break;
+			
+			case 1:
+				if(this.speed < 0)
+				{
+					this.speed = 0;
+				}
+				if (this.speed < this.maxSpeed)
+				{
+					this.speed+=0.5;
+				}
+			break;
+
+			default:
+				if(this.speed > 0)
+				{
+					this.speed-=0.5;
+				}
+				else if(this.speed < 0)
+				{
+					this.speed+=0.5;
+				}
+			break;
 			}
-			if (this.speed > -this.maxSpeed)
-			{
-				this.speed-=0.5;
-			}
+			this.newTimer = 100 + Math.random()*200;
+			this.timer = 0;
 		}
-		else if(Input.isDown("d"))
-		{
-			if(this.speed < 0)
-			{
-				this.speed = 0;
-			}
-			if (this.speed < this.maxSpeed)
-			{
-				this.speed+=0.5;
-			}
-		}
-		else
-		{
-			if(this.speed > 0)
-			{
-				this.speed-=0.5;
-			}
-			else if(this.speed < 0)
-			{
-				this.speed+=0.5;
-			}
-		}
+		
 
 		if(this.speed == 0)
 		{
