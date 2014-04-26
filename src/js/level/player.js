@@ -26,6 +26,7 @@ var Player = function(angle, world)
 	this.maxSpeed = 8;
 
 	this.jumpHeight = -10;
+	this.slamming = false;
 
 	var frames = [];
 
@@ -38,7 +39,7 @@ var Player = function(angle, world)
             height: 170
 		});
 	}
-	console.log(frames);
+
 	this.animations.mainSprite = this;
 	this.animations.add("walk",{
         frameRate: 0.1,
@@ -50,54 +51,93 @@ var Player = function(angle, world)
 	this.scale.x = 0.35;
 	this.scale.y = 0.35;
 
+	this.setTexture(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprCharacterSlam.png']);
+
+	var frames = [];
+
+	for(var i = 0; i < 11; i++)
+	{
+		frames.push({
+			x: i*360,
+            y: 0,
+            width: 360,
+            height: 318
+		});
+	}
+	
+	this.animations.mainSprite = this;
+	this.animations.add("slam",{
+        frameRate: 0.1,
+        frames: frames,
+        loop: true,
+        reversed: false,
+        cb: function(){ StateManager.getState().player.slamming = false; }
+	});
+
 	this.animations.play("walk");
 
 	this.update = function(data)
 	{
 		this.animations.update(data);
-		if(Input.isDown("left"))
+
+		if (Input.isDown("q"))
 		{
-			if(this.speed > 0)
+			if (!this.slamming)
 			{
+				this.slamming = true;
+				this.animations.setAnimation("slam");
 				this.speed = 0;
-			}
-			if (this.speed > -this.maxSpeed)
-			{
-				this.speed-=0.5;
-			}
-		}
-		else if(Input.isDown("right"))
-		{
-			if(this.speed < 0)
-			{
-				this.speed = 0;
-			}
-			if (this.speed < this.maxSpeed)
-			{
-				this.speed+=0.5;
-			}
-		}
-		else
-		{
-			if(this.speed > 0)
-			{
-				this.speed-=0.5;
-			}
-			else if(this.speed < 0)
-			{
-				this.speed+=0.5;
 			}
 		}
 
-		this.animations.setFramerate("walk",this.maxSpeed/20-Math.abs(this.speed)/20);
+		if(!this.slamming)
+		{
+			if(Input.isDown("left"))
+			{
+				if(this.speed > 0)
+				{
+					this.speed = 0;
+				}
+				if (this.speed > -this.maxSpeed)
+				{
+					this.speed-=0.5;
+				}
+				this.animations.setAnimation("walk");
+			}
+			else if(Input.isDown("right"))
+			{
+				if(this.speed < 0)
+				{
+					this.speed = 0;
+				}
+				if (this.speed < this.maxSpeed)
+				{
+					this.speed+=0.5;
+				}
+				this.animations.setAnimation("walk");
+			}
+			else
+			{
+				if(this.speed > 0)
+				{
+					this.speed-=0.5;
+				}
+				else if(this.speed < 0)
+				{
+					this.speed+=0.5;
+				}
+			}
 
-		if(this.speed == 0)
-		{
-			this.animations.pause("walk");
-		}
-		else
-		{
-			this.animations.resume("walk");
+			this.animations.setFramerate("walk",this.maxSpeed/20-Math.abs(this.speed)/20);
+
+			if(this.speed == 0)
+			{
+				this.animations.pause("walk");
+			}
+			else
+			{
+				this.animations.resume("walk");
+			}
 		}
 
 		if(this.radius > this.collisionPoint)

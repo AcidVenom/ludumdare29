@@ -33,7 +33,8 @@ var AnimationManager = function () {
                     frames: [],
                     state: this.__states.STOPPED,
                     frameRate: animData.frameRate ? animData.frameRate : 0.016,
-                    reversed: animData.reversed ? animData.reversed : false
+                    reversed: animData.reversed ? animData.reversed : false,
+                    cb: animData.cb ? animData.cb : undefined
                 };
                 newAnimation.frames = this.__createFrames(animData.frames);
                 this.__anims[name] = newAnimation; 
@@ -78,6 +79,12 @@ var AnimationManager = function () {
         setFramerate: function (name,rate) {
             this.__anims[name].frameRate = rate;
         },
+        setAnimation: function (name) {
+            if (this.__currentAnimation !== this.__anims[name])
+            {
+                this.play(name);
+            }
+        },
         update: function (data) {
             if (this.__currentAnimation !== null) {
                 var anim = this.__currentAnimation;
@@ -92,6 +99,10 @@ var AnimationManager = function () {
                             if (++anim.currentFrameId < anim.frames.length) {
                                 anim.currentFrame = anim.frames[anim.currentFrameId];
                             } else {
+                                if(anim.cb)
+                                {
+                                    anim.cb();
+                                }
                                 anim.currentFrameId = 0;
                                 anim.currentFrame = anim.frames[0];
                             }
@@ -101,6 +112,10 @@ var AnimationManager = function () {
                             if (--anim.currentFrameId >= 0) {
                                 anim.currentFrame = anim.frames[anim.currentFrameId];
                             } else {
+                                if(anim.cb)
+                                {
+                                    anim.cb();
+                                }
                                 anim.currentFrameId = anim.frames.length - 1;
                                 anim.currentFrame = anim.frames[anim.frames.length - 1];
                             }
