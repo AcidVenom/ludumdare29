@@ -97,22 +97,22 @@ var Player = function(angle, world)
 			puff.alpha = Math.abs(this.speed)*0.05;
 			puff.rotation = Math.random()*360*Math.PI/180;
 			Game.PIXI.Camera.addChild(puff);
+		}
 
-			for(var i = 0; i < this.puffs.length-1; ++i)
+		for(var i = 0; i < this.puffs.length-1; ++i)
+		{
+			this.puffs[i].lifeTime++;
+			this.puffs[i].rotation += 0.001;
+			this.puffs[i].position.x -= Math.cos(this.angle*Math.PI/180-Math.PI*this.speed/this.maxSpeed)*1;
+			this.puffs[i].position.y -= Math.sin(this.angle*Math.PI/180-Math.PI*this.speed/this.maxSpeed)*1;
+			this.puffs[i].scale.x += Math.abs(this.speed)*0.0025;
+			this.puffs[i].scale.y = this.puffs[i].scale.x;
+			this.puffs[i].alpha -= 0.025;
+
+			if (this.puffs[i].alpha < 0)
 			{
-				this.puffs[i].lifeTime++;
-				this.puffs[i].rotation += 0.001;
-				this.puffs[i].position.x -= Math.cos(this.angle*Math.PI/180-Math.PI*this.speed/this.maxSpeed)*1;
-				this.puffs[i].position.y -= Math.sin(this.angle*Math.PI/180-Math.PI*this.speed/this.maxSpeed)*1;
-				this.puffs[i].scale.x += Math.abs(this.speed)*0.0025;
-				this.puffs[i].scale.y = this.puffs[i].scale.x;
-				this.puffs[i].alpha -= 0.025;
-
-				if (this.puffs[i].alpha < 0)
-				{
-					Game.PIXI.Camera.removeChild(this.puffs[i]);
-					this.puffs.splice(i,1);
-				}
+				Game.PIXI.Camera.removeChild(this.puffs[i]);
+				this.puffs.splice(i,1);
 			}
 		}
 

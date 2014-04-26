@@ -1,5 +1,5 @@
 var Miner = function () {
-	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprCharacterWalk.png']);
+	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprMinerWalk.png']);
 
 	this.animations = {};
 
@@ -30,10 +30,10 @@ var Miner = function () {
 	for(var i = 0; i < 16; i++)
 	{
 		frames.push({
-			x: i*194,
+			x: i*296,
             y: 0,
-            width: 194,
-            height: 170
+            width: 296,
+            height: 255
 		});
 	}
 

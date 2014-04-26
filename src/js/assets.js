@@ -9,6 +9,8 @@ Game.Assets = {
 		Utils.Assets.Images + 'level/characters/sprCharacterWalk.png',
 		Utils.Assets.Images + 'level/characters/sprCharacterSlam.png',
 		Utils.Assets.Images + 'level/characters/sprGoblinWalk.png',
+		Utils.Assets.Images + 'level/characters/sprMinerWalk.png',
+		Utils.Assets.Images + 'level/characters/sprMinerMine.png',
 		Utils.Assets.Images + 'level/sprPuff.png',
 		Utils.Assets.Images + 'level/ui/sprStabilityMeter.png',
 		Utils.Assets.Images + 'level/ui/sprStabilityBar.png'
