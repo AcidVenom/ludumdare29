@@ -75,6 +75,29 @@ var Player = function(angle, world)
         cb: function(){ StateManager.getState().player.slamming = false; StateManager.getState().player.animations.play("walk"); }
 	});
 
+	this.setTexture(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprCharacterGodSmash.png']);
+
+	var frames = [];
+
+	for(var i = 0; i < 26; i++)
+	{
+		frames.push({
+			x: i*442,
+            y: 0,
+            width: 442,
+            height: 448
+		});
+	}
+	
+	this.animations.mainSprite = this;
+	this.animations.add("smash",{
+        frameRate: 0.1,
+        frames: frames,
+        loop: true,
+        reversed: false,
+        cb: function(){ StateManager.getState().player.smashing = false; StateManager.getState().player.animations.play("walk"); }
+	});
+
 	this.animations.play("walk");
 
 	this.update = function(data)
@@ -134,6 +157,24 @@ var Player = function(angle, world)
 			}
 		}
 
+		if (Input.isDown("w"))
+		{
+			if (!this.smashing)
+			{
+				this.smashing = true;
+				this.animations.setAnimation("smash");
+				this.speed = 0;
+				if(StateManager.getState().stability - 20 <= 0)
+				{
+					StateManager.getState().stability = 0;
+				}
+				else
+				{
+					StateManager.getState().stability -= 20;
+				}
+			}
+		}
+
 		if ( StateManager.getState().stability < StateManager.getState().maxStability)
 		{
 			if (StateManager.getState().stability + 0.5 > StateManager.getState().maxStability)
@@ -146,7 +187,7 @@ var Player = function(angle, world)
 			}				
 		}
 
-		if(!this.slamming)
+		if(!this.slamming && !this.smashing)
 		{
 
 			if(Input.isDown("left"))
