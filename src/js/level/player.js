@@ -28,6 +28,7 @@ var Player = function(angle, world)
 
 	this.jumpHeight = -10;
 	this.slamming = false;
+	this.smashing = false;
 
 	var frames = [];
 
@@ -95,8 +96,81 @@ var Player = function(angle, world)
         frames: frames,
         loop: true,
         reversed: false,
-        cb: function(){ StateManager.getState().player.smashing = false; StateManager.getState().player.animations.play("walk"); }
+        cb: function () { 
+        	if (!calledBack) {
+        		StateManager.getState().player.animations.stop("smash");
+	        	animateHammer(hammer1);
+	        	animateHammer(hammer2);
+	        	animateHammer(hammer3, function () {
+	        		CameraController.shake(35, 0.02, 10, function () {
+	        			StateManager.getState().player.scale = {
+		        			x: 0.35,
+		        			y: 0.35
+		        		}; 
+		        		StateManager.getState().player.smashing = false; 
+		        		StateManager.getState().player.animations.play("walk");
+
+		        		hammer1.position.x = 320;
+						hammer1.position.y = -254;
+						hammer2.position.x = 640;
+						hammer2.position.y = -254;
+						hammer3.position.x = 960;
+						hammer3.position.y = -254;
+						calledBack = false;
+	        		});
+	        	});
+	        	calledBack = true;
+	        }
+        }
 	});
+
+	var calledBack = false,
+		hammer1 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprHammer.png']),
+		hammer2 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprHammer.png']),
+		hammer3 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprHammer.png']),
+		animateHammer = function (hammer, cb) {
+			hammer.pivot.x = 0.5;
+			hammer.pivot.y = 0.5;
+			hammer.anchor.x = 0.5;
+			hammer.anchor.y = 0.5;
+			var tweenVars = {
+				r: Math.random() * 5
+			};
+			TweenLite.to(
+				hammer.position,
+				1,
+				{
+					x: 600,
+					y: 500,
+					ease: Quad.easeIn,
+					onComplete: function () {
+						if (cb) {
+							cb();
+						}
+					}
+				}
+			);
+			TweenLite.to(
+				tweenVars,
+				1,
+				{
+					r: tweenVars.r + 15,
+					ease: Quad.easeIn,
+					onUpdate: function () {
+						hammer.rotation = tweenVars.r;
+					}
+				}
+			);
+		};
+	hammer1.position.x = 320;
+	hammer1.position.y = -254;
+	hammer2.position.x = 640;
+	hammer2.position.y = -254;
+	hammer3.position.x = 960;
+	hammer3.position.y = -254;
+	Game.PIXI.Stage.addChild(hammer1);
+	Game.PIXI.Stage.addChild(hammer2);
+	Game.PIXI.Stage.addChild(hammer3);
 
 	this.animations.play("walk");
 
@@ -166,6 +240,10 @@ var Player = function(angle, world)
 				this.speed = 0;
 				this.scale.x = 1;
 				this.scale.y = 1;
+				this.position.x = 0;
+				this.position.y = -500;
+				Game.PIXI.Camera.position.y = 900;
+				Game.PIXI.Camera.position.x = 600;
 				if(StateManager.getState().stability - 20 <= 0)
 				{
 					StateManager.getState().stability = 0;
@@ -301,26 +379,29 @@ var Player = function(angle, world)
 			)
 		}
 
-		var wobble = Math.sin(this.angle*Math.PI/180*20);
 
-		this.position.x = Math.cos(this.angle * Math.PI / 180) * this.radius;
-		this.position.y = Math.sin(this.angle * Math.PI / 180) * (this.radius + wobble*4);
+		if (!this.smashing) {
+			var wobble = Math.sin(this.angle*Math.PI/180*20);
 
-		this.rotation = this.angle*Math.PI/180+Math.PI/2;
+			this.position.x = Math.cos(this.angle * Math.PI / 180) * this.radius;
+			this.position.y = Math.sin(this.angle * Math.PI / 180) * (this.radius + wobble*4);
 
-		this.angle+=this.speed*data.dt;
+			this.rotation = this.angle*Math.PI/180+Math.PI/2;
 
-		var dx = 590-this.position.x/4 - Game.PIXI.Camera.position.x;
-		var dy = 360-this.position.y/4 - Game.PIXI.Camera.position.y;
+			this.angle+=this.speed*data.dt;
 
-		var distance = Math.sqrt(dx*dx + dy*dy);
+			var dx = 590-this.position.x/4 - Game.PIXI.Camera.position.x;
+			var dy = 360-this.position.y/4 - Game.PIXI.Camera.position.y;
 
-		var movement = Math.Slerp(Game.PIXI.Camera.position.x, Game.PIXI.Camera.position.y, 590-this.position.x / 4, 360 - this.position.y / 4, distance / 2 * data.dt);
+			var distance = Math.sqrt(dx*dx + dy*dy);
 
-		if (movement !== null)
-		{
-			Game.PIXI.Camera.position.x += movement.x;
-			Game.PIXI.Camera.position.y += movement.y;
+			var movement = Math.Slerp(Game.PIXI.Camera.position.x, Game.PIXI.Camera.position.y, 590-this.position.x / 4, 360 - this.position.y / 4, distance / 2 * data.dt);
+
+			if (movement !== null)
+			{
+				Game.PIXI.Camera.position.x += movement.x;
+				Game.PIXI.Camera.position.y += movement.y;
+			}
 		}
 	}
 
