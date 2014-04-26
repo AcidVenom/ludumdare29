@@ -3,6 +3,7 @@ require(
 		"level/world.js", 
 		"level/player.js",
 		"gameobject.js",
+		"animationmanager.js",
 		"level/cameracontroller.js"
 	], main);
 

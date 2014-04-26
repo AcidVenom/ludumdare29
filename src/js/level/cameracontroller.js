@@ -1,21 +1,20 @@
 var CameraController = {
 	__camera: Game.PIXI.Camera,
-	shake: function (magnitude, duration, count, easing) {
-		var ease = easing || Linear.easeInOut,
-			_count = 0;
+	shake: function (magnitude, duration, count, angle) {
+		var _count = 0;
 
 		var tween = function () {
 			TweenLite.to(
 				CameraController.__camera.position,
 				duration,
-				{
-					x: Math.random() * magnitude,
-					y: Math.random() * magnitude,
+				{	
+					x: Math.random()*magnitude,
+					y: Math.random()*magnitude,
 					onComplete: function () {
 						if (++_count !== count) {
 							tween();
 						} else {
-							CameraController.reset(true);
+							CameraController.reset(true, duration);
 						}
 					}
 				}
@@ -23,12 +22,12 @@ var CameraController = {
 		};
 		tween();
 	},
-	reset: function (tween) {
+	reset: function (tween, duration) {
 		if(tween)
 		{
 			TweenLite.to(
 				CameraController.__camera.position,
-				0.5,
+				duration*2,
 				{
 					x: 0,
 					y: 0

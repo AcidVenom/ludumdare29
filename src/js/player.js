@@ -50,7 +50,6 @@ var Player = function(x, y, cx, cy)
         reversed: false
     });
     this.animations.play('idle');
-
     function tween () {
         TweenLite.to(
             text.position,
@@ -98,13 +97,15 @@ var Player = function(x, y, cx, cy)
         }
 
         if (moved.x > 0) {
-            this.scale.x = 1;
+            this.scale.x = 0.4;
         } else if (moved.x < 0) {
-            this.scale.x = -1;
+            this.scale.x = -0.4;
         }
 
         container.position.x += moved.x;
         container.position.y += moved.y;
+
+        this.scale.y = 0.4;
     }
 
     tween();

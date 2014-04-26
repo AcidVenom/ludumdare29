@@ -6,6 +6,6 @@
 Game.Assets = {
 	AssetList: [
 		Utils.Assets.Images + 'level/sprWorld.png',
-		Utils.Assets.Images + 'level/characters/sprCharacter.png'
+		Utils.Assets.Images + 'level/characters/sprCharacterWalk.png'
 	]
 };

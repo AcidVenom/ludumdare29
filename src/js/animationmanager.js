@@ -68,30 +68,43 @@ var AnimationManager = {
             anim.state = this.__states.PAUSED;
         }
     },
+    resume: function (name) {
+        if (this.__currentAnimation !== null)
+        {
+            this.__anims[name].state = this.__states.PLAYING;
+        }
+    },
+    setFramerate: function (name,rate) {
+        this.__anims[name].frameRate = rate;
+    },
     update: function (data) {
         if (this.__currentAnimation !== null) {
             var anim = this.__currentAnimation;
-            anim.currentFrame.timeShown += data.dt;
-            
-            if (anim.currentFrame.timeShown >= anim.frameRate) {
-                if (!anim.reversed) {
-                    anim.currentFrame.timeShown = 0;
-                    if (++anim.currentFrameId < anim.frames.length) {
-                        anim.currentFrame = anim.frames[anim.currentFrameId];
+
+            if (anim.state === this.__states.PLAYING)
+            {
+                anim.currentFrame.timeShown += data.dt;
+                
+                if (anim.currentFrame.timeShown >= anim.frameRate) {
+                    if (!anim.reversed) {
+                        anim.currentFrame.timeShown = 0;
+                        if (++anim.currentFrameId < anim.frames.length) {
+                            anim.currentFrame = anim.frames[anim.currentFrameId];
+                        } else {
+                            anim.currentFrameId = 0;
+                            anim.currentFrame = anim.frames[0];
+                        }
+                        this.mainSprite.setTexture(anim.currentFrame);
                     } else {
-                        anim.currentFrameId = 0;
-                        anim.currentFrame = anim.frames[0];
+                        anim.currentFrame.timeShown = 0;
+                        if (--anim.currentFrameId >= 0) {
+                            anim.currentFrame = anim.frames[anim.currentFrameId];
+                        } else {
+                            anim.currentFrameId = anim.frames.length - 1;
+                            anim.currentFrame = anim.frames[anim.frames.length - 1];
+                        }
+                        this.mainSprite.setTexture(anim.currentFrame);
                     }
-                    this.mainSprite.setTexture(anim.currentFrame);
-                } else {
-                    anim.currentFrame.timeShown = 0;
-                    if (--anim.currentFrameId >= 0) {
-                        anim.currentFrame = anim.frames[anim.currentFrameId];
-                    } else {
-                        anim.currentFrameId = anim.frames.length - 1;
-                        anim.currentFrame = anim.frames[anim.frames.length - 1];
-                    }
-                    this.mainSprite.setTexture(anim.currentFrame);
                 }
             }
         }

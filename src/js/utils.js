@@ -39,3 +39,23 @@ var Utils = {
 		}
 	}
 };
+
+Math.Slerp = function(x1,y1,x2,y2,speed)
+{
+	var delta = {x: x2-x1,y: y2-y1}
+	var distance = Math.sqrt(delta.x*delta.x + delta.y*delta.y);
+	var movement = {x: 0, y: 0}
+
+	if(distance > speed)
+	{
+		var ratio = speed/distance;
+		movement.x = ratio * delta.x;
+		movement.y = ratio * delta.y;
+	}
+	else
+	{
+		return null;
+	}
+
+	return movement;
+}
