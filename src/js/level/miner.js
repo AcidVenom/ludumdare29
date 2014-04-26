@@ -1,4 +1,4 @@
-var Miner = function () {
+var Miner = function (angle, world, hotspot) {
 	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprMinerWalk.png']);
 
 	this.animations = {};
@@ -74,7 +74,7 @@ var Miner = function () {
 
 	var frames = [];
 
-	for(var i = 0; i < 16; i++)
+	for(var i = 0; i < 8; i++)
 	{
 		frames.push({
 			x: i*296,
@@ -96,8 +96,8 @@ var Miner = function () {
 	this.velocity = this.jumpHeight;
 	this.radius--;
 
-	this.scale.x = 0.35;
-	this.scale.y = -0.35;
+	this.scale.x = 0.25;
+	this.scale.y = -0.25;
 
 	this.update = function (data) {
 		this.animations.update(data);
@@ -107,18 +107,16 @@ var Miner = function () {
 		if (this.AI.currentState !== null) {
 			switch(Math.round(Math.random() * 1)) {
 				case 0:
-					console.log('heybhfd');
 					this.AI.currentState = 'idle';
 				break;
 				case 1:
 					this.AI.currentTargetAngle = this.AI.calculateNextTarget();
 					this.AI.currentState = 'targeted';
-					console.log('fdsakljdkfh');
 				break;
 			}
 		} else if (this.AI.currentTargetAngle === this.angle || !this.AI.currentTargetAngle) {
-			console.log('h');
 			this.AI.currentTargetAngle = this.hotspot;
+			console.log(this.AI.distanceToTarget());
 		}
 
 		if(this.AI.distanceToTarget() !== 0 && this.AI.distanceToTarget(true) <= 20) {
