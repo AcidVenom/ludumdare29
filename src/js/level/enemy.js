@@ -1,20 +1,18 @@
-var Player = function(angle, world)
-{
+var Enemy = function (angle, world) {
 	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprCharacterWalk.png']);
 
 	this.animations = {};
 
-	extend(this,sprite);
+	extend(this, sprite);
 	extend(this.animations, AnimationManager());
 
-	this.collisionPoint = 340;
+	this.collisionPoint = 255;
 	this.world = world;
 	this.angle = angle;
 	this.radius = this.collisionPoint;
 	this.velocity = 0;
 	this.position.x = 0;
 	this.position.y = 0;
-	this.followPoint = {x: 0, y: 0};
 
 	this.anchor.x = 0.5;
 	this.anchor.y = 0.5;
@@ -25,7 +23,7 @@ var Player = function(angle, world)
 	this.speed = 0;
 	this.maxSpeed = 8;
 
-	this.jumpHeight = -10;
+	this.jumpHeight = 10;
 
 	var frames = [];
 
@@ -38,7 +36,7 @@ var Player = function(angle, world)
             height: 170
 		});
 	}
-	console.log(frames);
+
 	this.animations.mainSprite = this;
 	this.animations.add("walk",{
         frameRate: 0.1,
@@ -48,44 +46,44 @@ var Player = function(angle, world)
 	});
 
 	this.scale.x = 0.5;
-	this.scale.y = 0.5;
+	this.scale.y = -0.5;
 
 	this.animations.play("walk");
 
 	this.update = function(data)
 	{
 		this.animations.update(data);
-		if(Input.isDown("left"))
+		if(Input.isDown("a"))
 		{
 			if(this.speed > 0)
 			{
-				this.speed = 0;
+				//this.speed = 0;
 			}
 			if (this.speed > -this.maxSpeed)
 			{
-				this.speed-=0.5;
+				//this.speed-=0.5;
 			}
 		}
-		else if(Input.isDown("right"))
+		else if(Input.isDown("a"))
 		{
 			if(this.speed < 0)
 			{
-				this.speed = 0;
+				//this.speed = 0;
 			}
 			if (this.speed < this.maxSpeed)
 			{
-				this.speed+=0.5;
+				//this.speed+=0.5;
 			}
 		}
 		else
 		{
 			if(this.speed > 0)
 			{
-				this.speed-=0.5;
+				//this.speed-=0.5;
 			}
 			else if(this.speed < 0)
 			{
-				this.speed+=0.5;
+				//this.speed+=0.5;
 			}
 		}
 
@@ -100,22 +98,21 @@ var Player = function(angle, world)
 			this.animations.resume("walk");
 		}
 
-		if(this.radius > this.collisionPoint)
-		{
-			this.velocity += 5 * data.dt;
-			this.radius-=this.velocity;
-		}
-
 		if(this.radius < this.collisionPoint)
 		{
-			this.radius = this.collisionPoint;
-			CameraController.shake(15,0.025,2);
+			this.velocity += 5 * data.dt;
+			this.radius += this.velocity;
 		}
 
-		if (this.radius == this.collisionPoint && Input.isDown("space"))
+		if(this.radius > this.collisionPoint)
+		{
+			this.radius = this.collisionPoint;
+		}
+
+		if (this.radius == this.collisionPoint && Input.isDown('y'))
 		{
 			this.velocity = this.jumpHeight;
-			this.radius++;
+			this.radius--;
 		}
 
 		if(this.speed > 0)
@@ -133,15 +130,7 @@ var Player = function(angle, world)
 		this.rotation = this.angle*Math.PI/180+Math.PI/2;
 
 		this.angle+=this.speed*data.dt;
-
-		var movement = Math.Slerp(this.followPoint.x,this.followPoint.y,this.position.x,this.position.y);
-
-		if (movement !== null)
-		{
-			this.followPoint.x += movement.x;
-			this.followPoint.y += movement.y;
-		}
 	}
 
 	Game.PIXI.Camera.addChild(this);
-}
+};
