@@ -16,12 +16,13 @@ var Game = {
     AUTOSORT: true,
     initialise: function () {
         Game.PIXI = {
-            Stage: new PIXI.Stage(0x5b0202, true),
+            Stage: new PIXI.Stage(0x00FFA7, true),
             Renderer: PIXI.autoDetectRenderer(
                 1280,
                 720,
                 document.getElementById("canvas")
             ),
+            Camera: new PIXI.DisplayObjectContainer(),
             Loader: new PIXI.AssetLoader(Game.Assets.AssetList)
         };
 
@@ -37,7 +38,7 @@ var Game = {
             Game._objectsQueue = [];
 
             Game.sort();
-
+            Game.PIXI.Stage.addChild(Game.PIXI.Camera);
             requestAnimationFrame(Game.update);
         });
 
@@ -53,7 +54,7 @@ var Game = {
         Game.Stats.begin();
 
         var data = {
-            dt: (time - Game._timeLastFrame) / 1000
+            dt: (time - Game._timeLastFrame) / 100
         };
         Game._timeLastFrame = time;
 

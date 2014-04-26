@@ -5,11 +5,7 @@
  */
 Game.Assets = {
 	AssetList: [
-		Utils.Assets.Images + 'mario.jpg',
-		Utils.Assets.Images + 'luigi.png',
-		Utils.Assets.Images + 'menu-background.png',
-        Utils.Assets.Images + 'button-start.png',
-        Utils.Assets.Images + 'dragon.png',
-        Utils.Assets.Images + 'mountain.jpg'
+		Utils.Assets.Images + 'level/sprWorld.png',
+		Utils.Assets.Images + 'level/characters/sprCharacter.png'
 	]
 };

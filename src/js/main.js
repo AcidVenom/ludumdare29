@@ -1,23 +1,29 @@
 require(
 	[
-		"player.js", 
-		"animationmanager.js",
+		"level/world.js", 
+		"level/player.js",
 		"gameobject.js"
 	], main);
 
 function main()
 {
     StateManager.addState({
-		name: "menu",
+    	world: null,
+    	player: null,
+
+		name: "level",
 
 		initialise: function() {
+			this.world = new World();
+			this.player = new Player(0,this.world);
 		},
 		update: function(data) {
+			this.player.update(data);
 		},
 		destroy: function() {
 
 		}
 	});
 
-	StateManager.switchState("menu");
+	StateManager.switchState("level");
 }
