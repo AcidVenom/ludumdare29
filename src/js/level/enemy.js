@@ -52,7 +52,7 @@ var Enemy = function (angle, world) {
 	this.move = Math.floor(Math.random()*7);
 	this.timer = 0;
 	this.newTimer = 100 + Math.random()*200;
-
+	this.maxDistance = 60;
 	
 
 	this.velocity = this.jumpHeight;
@@ -65,7 +65,7 @@ var Enemy = function (angle, world) {
 		var nearest = undefined;
 		var nearestDistance = undefined;
 
-		for(var i = 0; i < StateManager.getState().miners.length-1; ++i)
+		for(var i = 0; i < StateManager.getState().miners.length; ++i)
 		{
 			var miner = StateManager.getState().miners[i];
 			var distance = Math.abs(miner.angle - this.angle);
@@ -84,14 +84,26 @@ var Enemy = function (angle, world) {
 				}
 			}
 		}
+		if(distance < this.maxDistance)
+		{
+			return nearest;
+		}
 
-		return nearest;
+		return false;
 	}
-
-	this.target = this.findNearestMiner();
 
 	this.update = function(data)
 	{
+		if(this.angle > 360)
+		{
+			this.angle = 0;
+		}
+
+		if(this.angle < 0)
+		{
+			this.angle = 360;
+		}
+		this.target = this.findNearestMiner();
 		this.animations.update(data);
 		if(this.scale.y > -0.25)
 		{
@@ -101,24 +113,21 @@ var Enemy = function (angle, world) {
 	
 		this.health.updateHealthbar(data);
 
-		var distance = Math.abs(this.target.angle - this.angle);
+		if(this.target !== undefined)
+		{
+			if (this.target.angle < this.angle)
+			{
+				this.speed = -6*data.dt;
+			}
 
-		if (this.target.angle < this.angle && distance > 2)
-		{
-			this.speed = -6*data.dt;
-		}
-		else
-		{
-			this.speed = 0;
-		}
-
-		if (this.target.angle > this.angle && distance > 2)
-		{
-			this.speed = 6*data.dt;
-		}
-		else
-		{
-			this.speed = 0;
+			else if (this.target.angle > this.angle)
+			{
+				this.speed = 6*data.dt;
+			}
+			else
+			{
+				this.speed = 0;
+			}
 		}
 
 		if(this.speed == 0)
