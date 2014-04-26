@@ -32,7 +32,7 @@ var AnimationManager = function () {
                     currentFrameId: 0,
                     frames: [],
                     state: this.__states.STOPPED,
-                    frameRate: animData.frameRate ? animData.frameRate : 0.016,
+                    frameRate: animData.frameRate ? animData.frameRate : 0.16,
                     reversed: animData.reversed ? animData.reversed : false,
                     cb: animData.cb ? animData.cb : undefined
                 };
@@ -46,6 +46,7 @@ var AnimationManager = function () {
             } else {
                 if (this.__currentAnimation !== null) {
                     this.stop();
+                    console.log("Blue");
                 }
                 var anim = this.__anims[name];
                 anim.state = this.__states.PLAYING;

@@ -88,11 +88,25 @@ var Player = function(angle, world)
 				this.slamming = true;
 				this.animations.setAnimation("slam");
 				this.speed = 0;
+				StateManager.getState().stability -= 10;
 			}
+		}
+
+		if ( StateManager.getState().stability < StateManager.getState().maxStability)
+		{
+			if (StateManager.getState().stability + 0.5 > StateManager.getState().maxStability)
+			{
+				StateManager.getState().stability = StateManager.getState().maxStability
+			}
+			else
+			{
+				StateManager.getState().stability += 0.5;
+			}				
 		}
 
 		if(!this.slamming)
 		{
+
 			if(Input.isDown("left"))
 			{
 				if(this.speed > 0)
@@ -250,6 +264,7 @@ var Player = function(angle, world)
 
 			if (this.puffs[i].alpha < 0)
 			{
+				Game.PIXI.Camera.removeChild(this.puffs[i]);
 				this.puffs.splice(i,1);
 			}
 		}
