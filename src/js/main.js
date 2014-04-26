@@ -20,11 +20,15 @@ function main()
     	player: null,
     	enemies: [],
     	miners: [],
-    	players: [],
     	ui: null,
 		name: "level",
 
 		initialise: function() {
+			this.player = null;
+			this.world = null;
+			this.enemies = [];
+			this.miners = [];
+			this.ui = null;
     		this.hotspotMiners = Math.random() * 90;
     		this.hotspotEnemies = Math.random() * 90 + 180;
 			this.world = new World();
@@ -37,6 +41,8 @@ function main()
 			for (var i = 0; i < 10; ++i) {
 				this.enemies.push(new Enemy(Math.random() * 360, this.world, this.hotspotEnemies));
 			}
+
+			Game.PIXI.Camera.addChild(this.world.clouds);
 		},
 		update: function(data) {
 			this.player.update(data);
