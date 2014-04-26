@@ -2,11 +2,11 @@ var Enemy = function (angle, world) {
 	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprGoblinWalk.png']);
 
 	this.animations = {};
-	this.health = {};
 
 	extend(this, sprite);
 	extend(this.animations, AnimationManager());
-	extend(this.health, Healthbar(this));
+
+	this.health = new Healthbar(this);
 
 	this.collisionPoint = 265;
 	this.world = world;
@@ -50,10 +50,12 @@ var Enemy = function (angle, world) {
 	this.scale.x = 0;
 	this.scale.y = 0;
 
-	this.animations.play("walk");
+	
 
 	this.velocity = this.jumpHeight;
 	this.radius--;
+
+	this.animations.play("walk");
 
 	this.update = function(data)
 	{
