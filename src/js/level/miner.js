@@ -3,9 +3,11 @@ var Miner = function (angle, world, hotspot) {
 
 	this.animations = {};
 	this.miner = {};
+	this.health = {};
 
 	extend(this, sprite);
 	extend(this.animations, AnimationManager());
+	extend(this.health, Healthbar(this))
 
 	this.hotspot = hotspot || 0;
 	this.collisionPoint = 265;

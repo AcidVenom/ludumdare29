@@ -7,17 +7,21 @@ require(
 		"level/miner.js",
 		"level/healthbar.js",
 		"gameobject.js",
-		"level/cameracontroller.js"
+		"level/cameracontroller.js",
+		"level/ui.js"
 	], main);
 
 function main()
 {
     StateManager.addState({
+    	stability: 100,
+    	maxStability: 100,
     	world: null,
     	player: null,
     	enemies: [],
     	miners: [],
     	players: [],
+    	ui: null,
 		name: "level",
 
 		initialise: function() {
@@ -25,7 +29,7 @@ function main()
     		this.hotspotEnemies = Math.random() * 90 + 180;
 			this.world = new World();
 			this.player = new Player(Math.random() * 360, this.world);
-
+			this.ui = new UI(this.stability);
 			for (var i = 0; i < 10; ++i) {
 				this.miners.push(new Miner(Math.random() * 360, this.world, this.hotspotMiners))
 			}
@@ -43,6 +47,7 @@ function main()
 			for (var i = 0; i < this.enemies.length; ++i) {
 				this.enemies[i].update(data);
 			}
+			this.ui.update();
 		},
 		destroy: function() {
 			Game.PIXI.Camera.children = [];

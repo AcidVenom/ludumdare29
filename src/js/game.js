@@ -59,7 +59,7 @@ var Game = {
         Game.Stats.begin();
 
         var data = {
-            dt: (time - Game._timeLastFrame) / 100
+            dt: (time - Game._timeLastFrame) / 1000
         };
         Game._timeLastFrame = time;
 
