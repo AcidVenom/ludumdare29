@@ -47,12 +47,11 @@ var Enemy = function (angle, world) {
         reversed: false
 	});
 
-	this.scale.x = 0;
-	this.scale.y = 0;
+	this.scale.x = 0.25;
+	this.scale.y = -0.25;
 	this.move = Math.floor(Math.random()*7);
 	this.timer = 0;
-	this.newTimer = 100 + Math.random()*200;
-	this.maxDistance = 60;
+	this.maxDistance = 180;
 	
 
 	this.velocity = this.jumpHeight;
@@ -62,67 +61,67 @@ var Enemy = function (angle, world) {
 
 	this.findNearestMiner = function()
 	{
-		var nearest = undefined;
-		var nearestDistance = undefined;
+		var lowestDistance = undefined;
+		var lowestMiner = undefined;
 
 		for(var i = 0; i < StateManager.getState().miners.length; ++i)
 		{
 			var miner = StateManager.getState().miners[i];
-			var distance = Math.abs(miner.angle - this.angle);
 
-			if(nearest === undefined)
+			var dx = miner.position.x - this.position.x;
+			var dy = miner.position.y - this.position.y;
+
+			var dist = Math.sqrt(dx*dx + dy*dy);
+
+			if(lowestDistance == undefined)
 			{
-				nearest = miner;
-				nearestDistance = distance;
+				lowestDistance = dist;
+				lowestMiner = miner;
 			}
 			else
 			{
-				if (distance < nearestDistance)
+				if(dist < lowestDistance)
 				{
-					nearest = miner;
-					nearestDistance = distance;
+					lowestDistance = dist;
+					lowestMiner = miner;
 				}
 			}
 		}
-		if(distance < this.maxDistance)
-		{
-			return nearest;
-		}
-
-		return false;
+		return {miner: lowestMiner, distance: lowestDistance};
 	}
 
 	this.update = function(data)
 	{
+		this.animations.update(data);
+
 		if(this.angle > 360)
 		{
-			this.angle = 0;
+			this.angle = 1;
 		}
 
 		if(this.angle < 0)
 		{
-			this.angle = 360;
+			this.angle = 359;
 		}
-		this.target = this.findNearestMiner();
-		this.animations.update(data);
-		if(this.scale.y > -0.25)
-		{
-			this.scale.y -= 0.05;
-			this.scale.x += 0.05;
-		}
-	
+
 		this.health.updateHealthbar(data);
+		
 
-		if(this.target !== undefined)
+		var target = this.findNearestMiner();
+
+		if(target.miner)
 		{
-			if (this.target.angle < this.angle)
+			if(target.distance > 6)
 			{
-				this.speed = -6*data.dt;
-			}
+				if (this.angle - 180 < target.miner.angle - 180)
+				{
+					this.speed = 6*data.dt;
+				}
 
-			else if (this.target.angle > this.angle)
-			{
-				this.speed = 6*data.dt;
+				if (this.angle - 180 > target.miner.angle - 180)
+				{
+					this.speed = -6*data.dt;
+				}
 			}
 			else
 			{

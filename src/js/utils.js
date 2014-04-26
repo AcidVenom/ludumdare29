@@ -59,3 +59,4 @@ Math.Slerp = function(x1,y1,x2,y2,speed)
 
 	return movement;
 }
+

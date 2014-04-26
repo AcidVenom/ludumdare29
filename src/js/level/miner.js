@@ -57,18 +57,8 @@ var Miner = function (angle, world, hotspot) {
 	this.scale.x = 0.25;
 	this.scale.y = -0.25;
 
-	this.isMinerTargeted = function () {
-		for (var i = 0; i < StateManager.getState().enemies.length; i++) {
-			if (StateManager.getState().enemies[i].target === this) {
-				return StateManager.getState().enemies[i];
-			}
-		}
-		return false;
-	};
-
 	this.update = function (data) {
 		this.animations.update(data);
-		//console.log(this.health);
 		this.health.updateHealthbar(data);
 
 		if(this.angle > 360)
@@ -79,55 +69,6 @@ var Miner = function (angle, world, hotspot) {
 		if(this.angle < 0)
 		{
 			this.angle = 360;
-		}
-
-		this.targeted = this.isMinerTargeted();
-
-		if (!this.targeted) {
-			this.speed = 0;
-		} else {
-			var dist = Math.abs(this.targeted.angle - this.angle);
-			if(dist < 0) {
-				if(this.speed > 0)
-				{
-					this.speed = 0;
-				}
-				if (this.speed > -this.maxSpeed)
-				{
-					this.speed-=0.5;
-				}
-			}
-			else if(dist > 0)
-			{
-				
-				if(this.speed < 0)
-				{
-					this.speed = 0;
-				}
-				if (this.speed < this.maxSpeed)
-				{
-					this.speed+=0.5;
-				}
-			}
-			else
-			{
-				if(this.speed > 0)
-				{
-					this.speed-=0.5;
-				}
-				else if(this.speed < 0)
-				{
-					this.speed+=0.5;
-				}
-			}
-
-			if (this.speed > 0) {
-				this.scale.x = -0.25;
-				this.scale.y = -0.25;
-			} else if (this.speed < 0) {
-				this.scale.x = 0.25;
-				this.scale.y = -0.25;
-			}
 		}
 
 		if(this.speed == 0)
