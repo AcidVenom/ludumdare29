@@ -46,7 +46,6 @@ var AnimationManager = function () {
             } else {
                 if (this.__currentAnimation != null) {
                     this.stop();
-                    console.log("Blue");
                 }
                 var anim = this.__anims[name];
                 anim.state = this.__states.PLAYING;
