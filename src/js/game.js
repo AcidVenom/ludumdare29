@@ -38,7 +38,14 @@ var Game = {
             Game._objectsQueue = [];
 
             Game.sort();
+
+            //Game.PIXI.Camera._bounds.width = 1280;
+            //Game.PIXI.Camera._bounds.height = 720;
+            Game.PIXI.Camera.pivot.x = 0.5;
+            Game.PIXI.Camera.pivot.y = 0.5;
+
             Game.PIXI.Stage.addChild(Game.PIXI.Camera);
+
             requestAnimationFrame(Game.update);
         });
 

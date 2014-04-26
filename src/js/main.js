@@ -2,7 +2,8 @@ require(
 	[
 		"level/world.js", 
 		"level/player.js",
-		"gameobject.js"
+		"gameobject.js",
+		"level/cameracontroller.js"
 	], main);
 
 function main()
