@@ -52,7 +52,7 @@ var Enemy = function (angle, world) {
 	this.move = Math.floor(Math.random()*7);
 	this.timer = 0;
 	this.newTimer = 100 + Math.random()*200;
-	this.maxDistance = 60;
+	this.maxDistance = 100;
 	
 
 	this.velocity = this.jumpHeight;
