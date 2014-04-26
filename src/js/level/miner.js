@@ -2,6 +2,7 @@ var Miner = function () {
 	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprCharacterWalk.png']);
 
 	this.animations = {};
+	this.miner = {};
 
 	extend(this, sprite);
 	extend(this.animations, AnimationManager());
@@ -44,4 +45,10 @@ var Miner = function () {
         loop: true,
         reversed: false
 	});
+
+	this.update = function (data) {
+		this.animations.update(data);
+
+		
+	};
 };

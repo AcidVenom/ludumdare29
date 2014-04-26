@@ -16,6 +16,8 @@ function main()
     	player: null,
     	enemies: [],
     	players: [],
+    	hotspotMiners: Math.random() * 90,
+    	hotspotEnemies: Math.random() * 90 + 180
 
 		name: "level",
 
