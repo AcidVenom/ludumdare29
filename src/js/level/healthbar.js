@@ -1,6 +1,6 @@
 var Healthbar = function (entity) {
 	this.__maxHealth = 10;
-	this.__health = 5;
+	this.__health = 10;
 	this.__graphics = new PIXI.Graphics();
 	this.damage = function () {
 		this.__health--;
