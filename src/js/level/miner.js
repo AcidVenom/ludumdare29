@@ -35,11 +35,12 @@ var Miner = function (angle, world, hotspot) {
 	this.AI.currentTargetAngle = null;
 	this.AI.currentTargetStepsTaken = 0;
 	this.AI.distanceToTarget = function (bool) {
-		if (this.AI.currentTargetAngle !== null) {
+		if (this.currentTargetAngle !== null) {
+			var distToTarget;
 			if (bool) {
-				var distToTarget = this.angle - this.currentTargetAngle;
+				distToTarget = this.angle - this.currentTargetAngle;
 			} else {
-				var distToTarget = this.angle > this.currentTargetAngle ? this.angle - this.currentTargetAngle : this.currentTargetAngle - this.angle;
+				distToTarget = this.angle > this.currentTargetAngle ? this.angle - this.currentTargetAngle : this.currentTargetAngle - this.angle;
 			}
 			return distToTarget;
 		}
