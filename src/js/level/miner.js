@@ -29,6 +29,7 @@ var Miner = function (angle, world, hotspot) {
 	this.maxSpeed = 7;
 
 	this.jumpHeight = -10;
+	this.dead = false;
 
 	var frames = [];
 
@@ -80,67 +81,80 @@ var Miner = function (angle, world, hotspot) {
 	this.direction = Math.floor(Math.random()*2);
 
 	this.update = function (data) {
-		this.animations.update(data);
-		this.health.updateHealthbar(data);
-
-		if(this.angle > 360)
+		if (this.health.__health <= 0)
 		{
-			this.angle = 0;
+			this.dead = true;
 		}
 
-		if(this.angle < 0)
+		if(!this.dead)
 		{
-			this.angle = 360;
-		}
+			this.animations.update(data);
+			this.health.updateHealthbar(data);
 
-		if(this.targeted)
-		{
-			switch(this.direction)
+			if(this.angle > 360)
 			{
-				case 0:
-				this.speed = 14*data.dt;
-				break;
-
-				case 1:
-				this.speed = -14*data.dt;
-				break;
+				this.angle = 0;
 			}
+
+			if(this.angle < 0)
+			{
+				this.angle = 360;
+			}
+
+			if(this.targeted)
+			{
+				switch(this.direction)
+				{
+					case 0:
+					this.speed = 14*data.dt;
+					break;
+
+					case 1:
+					this.speed = -14*data.dt;
+					break;
+				}
+			}
+			else
+			{
+				this.speed = 0;
+			}
+
+			if(this.speed == 0)
+			{
+				this.animations.setAnimation("mine");
+				this.animations.setFramerate("mine",0.3);
+				this.direction = Math.floor(Math.random()*2);
+			}
+			else
+			{
+				this.animations.setAnimation("walk");
+				this.animations.setFramerate("mine",0.2);
+			}
+
+			if(this.speed > 0)
+			{
+				this.scale.x = -0.25;
+			}
+			if(this.speed < 0)
+			{
+				this.scale.x = 0.25;
+			}
+
+			var wobble = Math.sin(this.angle*Math.PI/180*50);
+
+
+			this.position.x = this.world.position.x + Math.cos(this.angle * Math.PI / 180) * this.radius;
+			this.position.y = this.world.position.y + Math.sin(this.angle * Math.PI / 180) * (this.radius + wobble*4);
+
+			this.rotation = this.angle*Math.PI/180+Math.PI/2;
+
+			this.angle+=this.speed*data.dt;
 		}
 		else
 		{
-			this.speed = 0;
+			Game.PIXI.Camera.removeChild(this);
+			StateManager.getState().miners.splice(StateManager.getState().miners.indexOf(this),1);
 		}
-
-		if(this.speed == 0)
-		{
-			this.animations.setAnimation("mine");
-			this.animations.setFramerate("mine",0.3);
-			this.direction = Math.floor(Math.random()*2);
-		}
-		else
-		{
-			this.animations.setAnimation("walk");
-			this.animations.setFramerate("mine",0.2);
-		}
-
-		if(this.speed > 0)
-		{
-			this.scale.x = -0.25;
-		}
-		if(this.speed < 0)
-		{
-			this.scale.x = 0.25;
-		}
-
-		var wobble = Math.sin(this.angle*Math.PI/180*50);
-
-
-		this.position.x = this.world.position.x + Math.cos(this.angle * Math.PI / 180) * this.radius;
-		this.position.y = this.world.position.y + Math.sin(this.angle * Math.PI / 180) * (this.radius + wobble*4);
-
-		this.rotation = this.angle*Math.PI/180+Math.PI/2;
-
-		this.angle+=this.speed*data.dt;
 	};
 
 	Game.PIXI.Camera.addChild(this);
