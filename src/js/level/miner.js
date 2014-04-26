@@ -3,11 +3,12 @@ var Miner = function (angle, world, hotspot) {
 
 	this.animations = {};
 	this.miner = {};
-	this.health = {};
 
 	extend(this, sprite);
 	extend(this.animations, AnimationManager());
-	extend(this.health, Healthbar(this))
+
+
+	this.health = new Healthbar(this);
 
 	this.hotspot = hotspot || 0;
 	this.collisionPoint = 265;
@@ -90,29 +91,38 @@ var Miner = function (angle, world, hotspot) {
         loop: true,
         reversed: false
 	});
+	this.animations.play('walk');
 
 	this.velocity = this.jumpHeight;
 	this.radius--;
 
+	this.scale.x = 0.35;
+	this.scale.y = -0.35;
+
 	this.update = function (data) {
 		this.animations.update(data);
+		//console.log(this.health);
 		this.health.updateHealthbar(data);
 
 		if (this.AI.currentState !== null) {
 			switch(Math.round(Math.random() * 1)) {
 				case 0:
+					console.log('heybhfd');
 					this.AI.currentState = 'idle';
 				break;
 				case 1:
 					this.AI.currentTargetAngle = this.AI.calculateNextTarget();
 					this.AI.currentState = 'targeted';
+					console.log('fdsakljdkfh');
 				break;
 			}
-		} else if (this.AI.currentTargetAngle === this.angle) {
-			this.AI.currentTargetAngle = this.AI.calculateNextTarget();
+		} else if (this.AI.currentTargetAngle === this.angle || !this.AI.currentTargetAngle) {
+			console.log('h');
+			this.AI.currentTargetAngle = this.hotspot;
 		}
 
 		if(this.AI.distanceToTarget() !== 0 && this.AI.distanceToTarget(true) <= 20) {
+			console.log(1);
 			if(this.speed > 0)
 			{
 				this.speed = 0;
@@ -122,8 +132,9 @@ var Miner = function (angle, world, hotspot) {
 				this.speed-=0.5;
 			}
 		}
-		else if(this.AI.distanceToTarget() !== 0 && this.AI.distanceToTarget(true) <= 20)
+		else if(this.AI.distanceToTarget() !== 0 && this.AI.distanceToTarget(true) >= 20)
 		{
+			console.log(2);
 			if(this.speed < 0)
 			{
 				this.speed = 0;
@@ -135,6 +146,7 @@ var Miner = function (angle, world, hotspot) {
 		}
 		else
 		{
+			//console.log(3);
 			if(this.speed > 0)
 			{
 				this.speed-=0.5;
@@ -163,4 +175,6 @@ var Miner = function (angle, world, hotspot) {
 
 		this.angle+=this.speed*data.dt;
 	};
+
+	Game.PIXI.Camera.addChild(this);
 };
