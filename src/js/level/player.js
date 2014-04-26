@@ -7,7 +7,7 @@ var Player = function(angle, world)
 	extend(this,sprite);
 	extend(this.animations, AnimationManager());
 
-	this.collisionPoint = 340;
+	this.collisionPoint = 330;
 	this.world = world;
 	this.angle = angle;
 	this.radius = this.collisionPoint;
@@ -47,8 +47,8 @@ var Player = function(angle, world)
         reversed: false
 	});
 
-	this.scale.x = 0.5;
-	this.scale.y = 0.5;
+	this.scale.x = 0.35;
+	this.scale.y = 0.35;
 
 	this.animations.play("walk");
 
@@ -109,7 +109,6 @@ var Player = function(angle, world)
 		if(this.radius < this.collisionPoint)
 		{
 			this.radius = this.collisionPoint;
-			CameraController.shake(15,0.025,2);
 		}
 
 		if (this.radius == this.collisionPoint && Input.isDown("space"))
@@ -117,29 +116,68 @@ var Player = function(angle, world)
 			this.velocity = this.jumpHeight;
 			this.radius++;
 		}
-
 		if(this.speed > 0)
 		{
-			this.scale.x = -0.5;
+			this.scale.x = -0.35;
+
+			TweenLite.to(
+				Game.PIXI.Camera.scale,
+				3,
+				{
+					x: 1,
+					y: 1
+				},
+				Linear.easeIn
+			)
+			
+
 		}
 		else if(this.speed < 0)
 		{
-			this.scale.x = 0.5;
+			this.scale.x = 0.35;
+
+			TweenLite.to(
+				Game.PIXI.Camera.scale,
+				3,
+				{
+					x: 1,
+					y: 1
+				},
+				Linear.easeIn
+			)
+
+		}
+		else
+		{
+			TweenLite.to(
+				Game.PIXI.Camera.scale,
+				2,
+				{
+					x: 1.3,
+					y: 1.3
+				},
+				Bounce.easeOut
+			)
 		}
 
-		this.position.x = this.world.position.x + Math.cos(this.angle * Math.PI / 180) * this.radius;
-		this.position.y = this.world.position.y + Math.sin(this.angle * Math.PI / 180) * this.radius;
+		this.position.x = Math.cos(this.angle * Math.PI / 180) * this.radius;
+		this.position.y = Math.sin(this.angle * Math.PI / 180) * this.radius;
 
 		this.rotation = this.angle*Math.PI/180+Math.PI/2;
 
 		this.angle+=this.speed*data.dt;
 
-		var movement = Math.Slerp(this.followPoint.x,this.followPoint.y,this.position.x,this.position.y);
+		var dx = 590-this.position.x/4 - Game.PIXI.Camera.position.x;
+		var dy = 360-this.position.y/4 - Game.PIXI.Camera.position.y;
+
+		var distance = Math.sqrt(dx*dx + dy*dy);
+
+		var movement = Math.Slerp(Game.PIXI.Camera.position.x,Game.PIXI.Camera.position.y,590-this.position.x/4,360-this.position.y/4,distance/2*data.dt);
 
 		if (movement !== null)
 		{
-			this.followPoint.x += movement.x;
-			this.followPoint.y += movement.y;
+			Game.PIXI.Camera.position.x += movement.x;
+			Game.PIXI.Camera.position.y += movement.y;
 		}
 	}
 

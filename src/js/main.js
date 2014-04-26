@@ -1,7 +1,6 @@
 require(
 	[
 		"animationmanager.js",
-		"animationmanager2.js",
 		"level/world.js", 
 		"level/player.js",
 		"level/enemy.js",
