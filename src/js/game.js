@@ -16,10 +16,10 @@ var Game = {
     AUTOSORT: true,
     initialise: function () {
         Game.PIXI = {
-            Stage: new PIXI.Stage(0xFFFFFF, true),
+            Stage: new PIXI.Stage(0x5b0202, true),
             Renderer: PIXI.autoDetectRenderer(
-                640,
-                719,
+                1280,
+                720,
                 document.getElementById("canvas")
             ),
             Loader: new PIXI.AssetLoader(Game.Assets.AssetList)
@@ -70,27 +70,6 @@ var Game = {
         // End the tick
         Game.Stats.end();
     },
-    Object: {
-        __z: 0,
-        preUpdate: function (data) {
-            
-        },
-        postUpdate: function (data) {
-            for (var x = 0; x < objects[i].children.length; x++) {
-                objects[i].children[i].update(data);
-            }
-        },
-        setZ: function (z) {
-            this.__z = Sugar.isNumber(z) ? z : this.__z;
-            if (Game.AUTOSORT) {
-                Game.sort();
-            }
-            return this.__z;
-        },
-        getZ: function () {
-            return this.__z;
-        }
-    },
     sort: function () {
         if (Game._initialized) {
             Game.PIXI.Stage.children.sort(function (a, b) {
@@ -129,5 +108,3 @@ var Game = {
         return this.__scale;
     }
 };
-
-var Screens = {};

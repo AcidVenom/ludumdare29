@@ -1,4 +1,9 @@
-require(["player.js", "animationmanager.js"], main);
+require(
+	[
+		"player.js", 
+		"animationmanager.js",
+		"gameobject.js"
+	], main);
 
 function main()
 {
@@ -6,12 +11,8 @@ function main()
 		name: "menu",
 
 		initialise: function() {
-			this.mountain = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'mountain.jpg']);
-			Game.PIXI.Stage.addChild(this.mountain);
-			this.player = new Player();
 		},
 		update: function(data) {
-			this.player.update(data);
 		},
 		destroy: function() {
 
