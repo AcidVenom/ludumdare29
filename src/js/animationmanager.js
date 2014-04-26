@@ -44,7 +44,7 @@ var AnimationManager = function () {
             if (!this.__anims[name]) {
                 throw 'AnimationManager.play(): No animation found that corresponds to ' + name
             } else {
-                if (this.__currentAnimation !== null) {
+                if (this.__currentAnimation != null) {
                     this.stop();
                     console.log("Blue");
                 }
@@ -56,7 +56,7 @@ var AnimationManager = function () {
             }
         },
         stop: function () {
-            if (this.__currentAnimation !== null) {
+            if (this.__currentAnimation != null) {
                 var anim = this.__currentAnimation;
                 anim.currentFrame.timeShown = 0;
                 anim.currentFrameId = anim.reversed ? anim.frames.length - 1 : 0;
@@ -66,13 +66,14 @@ var AnimationManager = function () {
             }
         },
         pause: function (name) {
-            if (this.__currentAnimation !== null) {
+            if (this.__currentAnimation != null) {
                 var anim = this.__anims[name];
                 anim.state = this.__states.PAUSED;
+                this.mainSprite.setTexture(anim.currentFrame ? anim.currentFrame : anim.frames[0]);
             }
         },
         resume: function (name) {
-            if (this.__currentAnimation !== null)
+            if (this.__currentAnimation != null)
             {
                 this.__anims[name].state = this.__states.PLAYING;
             }
@@ -81,16 +82,16 @@ var AnimationManager = function () {
             this.__anims[name].frameRate = rate;
         },
         setAnimation: function (name) {
-            if (this.__currentAnimation !== this.__anims[name])
+            if (this.__currentAnimation != this.__anims[name])
             {
                 this.play(name);
             }
         },
         update: function (data) {
-            if (this.__currentAnimation !== null) {
+            if (this.__currentAnimation != null) {
                 var anim = this.__currentAnimation;
 
-                if (anim.state === this.__states.PLAYING)
+                if (anim.state == this.__states.PLAYING)
                 {
                     anim.currentFrame.timeShown += data.dt;
                     

@@ -81,6 +81,41 @@ var Player = function(angle, world)
 	{
 		this.animations.update(data);
 
+		if(this.radius == this.collisionPoint)
+		{
+			this.puffs.push(new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprPuff.png']));
+			var puff = this.puffs[this.puffs.length-1];
+			puff.position.x = this.position.x-Math.cos(this.angle*Math.PI/180)*20-Math.random()*10 + Math.random()*20;
+			puff.position.y = this.position.y-Math.sin(this.angle*Math.PI/180)*20-Math.random()*10 + Math.random()*20;
+			puff.scale.x = 0.1;
+			puff.scale.y = puff.scale.x;
+			puff.lifeTime = 0;
+			puff.anchor.x = 0.5;
+			puff.anchor.y = 0.5;
+			puff.pivot.x = 0.5;
+			puff.pivot.y = 0.5;
+			puff.alpha = Math.abs(this.speed)*0.05;
+			puff.rotation = Math.random()*360*Math.PI/180;
+			Game.PIXI.Camera.addChild(puff);
+
+			for(var i = 0; i < this.puffs.length-1; ++i)
+			{
+				this.puffs[i].lifeTime++;
+				this.puffs[i].rotation += 0.001;
+				this.puffs[i].position.x -= Math.cos(this.angle*Math.PI/180-Math.PI*this.speed/this.maxSpeed)*1;
+				this.puffs[i].position.y -= Math.sin(this.angle*Math.PI/180-Math.PI*this.speed/this.maxSpeed)*1;
+				this.puffs[i].scale.x += Math.abs(this.speed)*0.0025;
+				this.puffs[i].scale.y = this.puffs[i].scale.x;
+				this.puffs[i].alpha -= 0.025;
+
+				if (this.puffs[i].alpha < 0)
+				{
+					Game.PIXI.Camera.removeChild(this.puffs[i]);
+					this.puffs.splice(i,1);
+				}
+			}
+		}
+
 		if (Input.isDown("q"))
 		{
 			if (!this.slamming)
@@ -88,7 +123,14 @@ var Player = function(angle, world)
 				this.slamming = true;
 				this.animations.setAnimation("slam");
 				this.speed = 0;
-				StateManager.getState().stability -= 10;
+				if(StateManager.getState().stability - 20 <= 0)
+				{
+					StateManager.getState().stability = 0;
+				}
+				else
+				{
+					StateManager.getState().stability -= 20;
+				}
 			}
 		}
 
@@ -164,6 +206,7 @@ var Player = function(angle, world)
 		if(this.radius < this.collisionPoint)
 		{
 			this.radius = this.collisionPoint;
+			this.velocity = 0;
 		}
 
 		if (this.radius == this.collisionPoint && Input.isDown("space"))
@@ -235,38 +278,6 @@ var Player = function(angle, world)
 		{
 			Game.PIXI.Camera.position.x += movement.x;
 			Game.PIXI.Camera.position.y += movement.y;
-		}
-
-		this.puffs.push(new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprPuff.png']));
-		var puff = this.puffs[this.puffs.length-1];
-		puff.position.x = this.position.x-Math.cos(this.angle*Math.PI/180)*20-Math.random()*10 + Math.random()*20;
-		puff.position.y = this.position.y-Math.sin(this.angle*Math.PI/180)*20-Math.random()*10 + Math.random()*20;
-		puff.scale.x = 0.1;
-		puff.scale.y = puff.scale.x;
-		puff.lifeTime = 0;
-		puff.anchor.x = 0.5;
-		puff.anchor.y = 0.5;
-		puff.pivot.x = 0.5;
-		puff.pivot.y = 0.5;
-		puff.alpha = Math.abs(this.speed)*0.05;
-		puff.rotation = Math.random()*360*Math.PI/180;
-		Game.PIXI.Camera.addChild(puff);
-
-		for(var i = 0; i < this.puffs.length-1; ++i)
-		{
-			this.puffs[i].lifeTime++;
-			this.puffs[i].rotation += 0.001;
-			this.puffs[i].position.x -= Math.cos(this.angle*Math.PI/180-Math.PI*this.speed/this.maxSpeed)*1;
-			this.puffs[i].position.y -= Math.sin(this.angle*Math.PI/180-Math.PI*this.speed/this.maxSpeed)*1;
-			this.puffs[i].scale.x += Math.abs(this.speed)*0.0025;
-			this.puffs[i].scale.y = this.puffs[i].scale.x;
-			this.puffs[i].alpha -= 0.025;
-
-			if (this.puffs[i].alpha < 0)
-			{
-				Game.PIXI.Camera.removeChild(this.puffs[i]);
-				this.puffs.splice(i,1);
-			}
 		}
 	}
 
