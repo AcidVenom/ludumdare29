@@ -1,5 +1,5 @@
 var Enemy = function (angle, world) {
-	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprCharacterWalk.png']);
+	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprGoblinWalk.png']);
 
 	this.animations = {};
 	this.health = {};
@@ -23,38 +23,47 @@ var Enemy = function (angle, world) {
 	this.pivot.y = 0.5;
 
 	this.speed = 0;
-	this.maxSpeed = 8;
+	this.maxSpeed = 2;
 
 	this.jumpHeight = -10;
 
 	var frames = [];
 
-	for(var i = 0; i < 16; i++)
+	for(var i = 0; i < 7; i++)
 	{
 		frames.push({
-			x: i*194,
+			x: i*283,
             y: 0,
-            width: 194,
-            height: 170
+            width: 283,
+            height: 290
 		});
 	}
 
 	this.animations.mainSprite = this;
 	this.animations.add("walk",{
-        frameRate: 0.1,
+        frameRate: 1,
         frames: frames,
         loop: true,
         reversed: false
 	});
 
-	this.scale.x = 0.35;
-	this.scale.y = -0.35;
+	this.scale.x = 0;
+	this.scale.y = 0;
 
 	this.animations.play("walk");
+
+	this.velocity = this.jumpHeight;
+	this.radius--;
 
 	this.update = function(data)
 	{
 		this.animations.update(data);
+		if(this.scale.y > -0.25)
+		{
+			this.scale.y -= 0.05;
+			this.scale.x += 0.05;
+		}
+	
 		this.health.updateHealthbar(data);
 		if(Input.isDown("a"))
 		{
@@ -90,8 +99,6 @@ var Enemy = function (angle, world) {
 			}
 		}
 
-		this.animations.setFramerate("walk",this.maxSpeed/20-Math.abs(this.speed)/20);
-
 		if(this.speed == 0)
 		{
 			this.animations.pause("walk");
@@ -112,25 +119,21 @@ var Enemy = function (angle, world) {
 			this.radius = this.collisionPoint;
 		}
 
-		if (this.radius == this.collisionPoint && Input.isDown('y'))
-		{
-			this.velocity = this.jumpHeight;
-			this.radius--;
-		}
-
 		if(this.speed > 0)
 		{
-			this.scale.x = -0.35;
+			this.scale.x = -0.25;
 			this.health.__graphics.scale.x = -1;
 		}
 		else if(this.speed < 0)
 		{
-			this.scale.x = 0.35;
+			this.scale.x = 0.25;
 			this.health.__graphics.scale.x = 1;
 		}
 
+		var wobble = Math.sin(this.angle*Math.PI/180*50);
+
 		this.position.x = this.world.position.x + Math.cos(this.angle * Math.PI / 180) * this.radius;
-		this.position.y = this.world.position.y + Math.sin(this.angle * Math.PI / 180) * this.radius;
+		this.position.y = this.world.position.y + Math.sin(this.angle * Math.PI / 180) * (this.radius + wobble*4);
 
 		this.rotation = this.angle*Math.PI/180+Math.PI/2;
 
