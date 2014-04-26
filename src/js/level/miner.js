@@ -2,7 +2,6 @@ var Miner = function (angle, world, hotspot) {
 	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprMinerWalk.png']);
 
 	this.animations = {};
-	this.miner = {};
 
 	extend(this, sprite);
 	extend(this.animations, AnimationManager());
@@ -80,6 +79,9 @@ var Miner = function (angle, world, hotspot) {
 	this.targeted = false;
 	this.direction = Math.floor(Math.random()*2);
 
+	this.velocity = this.jumpHeight;
+	this.radius--;
+
 	this.update = function (data) {
 		if (this.health.__health <= 0)
 		{
@@ -131,13 +133,26 @@ var Miner = function (angle, world, hotspot) {
 				this.animations.setFramerate("mine",0.2);
 			}
 
+			if(this.radius < this.collisionPoint)
+			{
+				this.velocity += 5 * data.dt;
+				this.radius += this.velocity;
+			}
+
+			if(this.radius > this.collisionPoint)
+			{
+				this.radius = this.collisionPoint;
+			}
+
 			if(this.speed > 0)
 			{
 				this.scale.x = -0.25;
+				this.health.__graphics.scale.x = -1;
 			}
 			if(this.speed < 0)
 			{
 				this.scale.x = 0.25;
+				this.health.__graphics.scale.x = 1;
 			}
 
 			var wobble = Math.sin(this.angle*Math.PI/180*50);
@@ -152,8 +167,8 @@ var Miner = function (angle, world, hotspot) {
 		}
 		else
 		{
-			Game.PIXI.Camera.removeChild(this);
 			StateManager.getState().miners.splice(StateManager.getState().miners.indexOf(this),1);
+			Game.PIXI.Camera.removeChild(this);
 		}
 	};
 
