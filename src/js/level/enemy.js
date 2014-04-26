@@ -51,7 +51,7 @@ var Enemy = function (angle, world) {
 	this.scale.y = -0.25;
 	this.move = Math.floor(Math.random()*7);
 	this.timer = 0;
-	
+
 	this.velocity = this.jumpHeight;
 	this.radius--;
 
@@ -64,33 +64,37 @@ var Enemy = function (angle, world) {
 
 		for(var i = 0; i < StateManager.getState().miners.length; ++i)
 		{
-			var miner = StateManager.getState().miners[i];
 
-			var dx = miner.position.x - this.position.x;
-			var dy = miner.position.y - this.position.y;
+			var dx = StateManager.getState().miners[i].position.x - this.position.x;
+			var dy = StateManager.getState().miners[i].position.y - this.position.y;
 
 			var dist = Math.sqrt(dx*dx + dy*dy);
 
 			if(lowestDistance == undefined)
 			{
 				lowestDistance = dist;
-				lowestMiner = miner;
+				lowestMiner = StateManager.getState().miners[i];
 			}
 			else
 			{
 				if(dist < lowestDistance)
 				{
 					lowestDistance = dist;
-					lowestMiner = miner;
+					lowestMiner = StateManager.getState().miners[i];
 				}
 			}
 		}
-		return {miner: lowestMiner, distance: lowestDistance};
+
+		if(lowestDistance <= 200)
+		{
+			return {miner: lowestMiner, distance: lowestDistance};
+		}
 	}
 
 	this.update = function(data)
 	{
 		this.animations.update(data);
+		this.timer++;
 
 		if(this.angle > 360)
 		{
@@ -107,10 +111,11 @@ var Enemy = function (angle, world) {
 
 		var target = this.findNearestMiner();
 
-		if(target.miner)
+		if(target && target.miner)
 		{
 			if(target.distance > 6)
 			{
+				target.miner.targeted = true;
 				if (this.angle - 180 < target.miner.angle - 180)
 				{
 					this.speed = 6*data.dt;
@@ -124,6 +129,35 @@ var Enemy = function (angle, world) {
 			else
 			{
 				this.speed = 0;
+			}
+
+			if(target.distance > 200)
+			{
+				target.miner.targeted = false;
+				this.speed = 0;
+			}
+		}
+		else
+		{
+			if(this.timer >= 100)
+			{
+				this.move = Math.floor(Math.random()*4);
+				switch(this.move)
+				{
+					case 0:
+					this.speed = -6*data.dt;
+					break;
+
+					case 1:
+					this.speed = 6*data.dt;
+					break;
+
+					default:
+					this.speed = 0;
+					break;
+				}
+
+				this.timer = 0;
 			}
 		}
 
