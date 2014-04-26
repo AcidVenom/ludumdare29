@@ -1,5 +1,5 @@
-var Miner = function (angle, world, hotspot) {
-	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprCharacterWalk.png']);
+var Miner = function () {
+	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprMinerWalk.png']);
 
 	this.animations = {};
 	this.miner = {};
@@ -77,10 +77,10 @@ var Miner = function (angle, world, hotspot) {
 	for(var i = 0; i < 16; i++)
 	{
 		frames.push({
-			x: i*194,
+			x: i*296,
             y: 0,
-            width: 194,
-            height: 170
+            width: 296,
+            height: 255
 		});
 	}
 
