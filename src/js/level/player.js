@@ -82,16 +82,16 @@ var Player = function(angle, world)
 	for(var i = 0; i < 26; i++)
 	{
 		frames.push({
-			x: i*442,
+			x: i*221,
             y: 0,
-            width: 442,
-            height: 448
+            width: 221,
+            height: 224
 		});
 	}
 	
 	this.animations.mainSprite = this;
 	this.animations.add("smash",{
-        frameRate: 0.1,
+        frameRate: 0.3,
         frames: frames,
         loop: true,
         reversed: false,
@@ -164,6 +164,8 @@ var Player = function(angle, world)
 				this.smashing = true;
 				this.animations.setAnimation("smash");
 				this.speed = 0;
+				this.scale.x = 1;
+				this.scale.y = 1;
 				if(StateManager.getState().stability - 20 <= 0)
 				{
 					StateManager.getState().stability = 0;
