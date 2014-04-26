@@ -23,7 +23,7 @@ var Player = function(angle, world)
 	this.pivot.y = 0.5;
 
 	this.speed = 0;
-	this.maxSpeed = 8;
+	this.maxSpeed = 12;
 
 	this.jumpHeight = -10;
 	this.slamming = false;
@@ -200,8 +200,10 @@ var Player = function(angle, world)
 			)
 		}
 
+		var wobble = Math.sin(this.angle*Math.PI/180*20);
+
 		this.position.x = Math.cos(this.angle * Math.PI / 180) * this.radius;
-		this.position.y = Math.sin(this.angle * Math.PI / 180) * this.radius;
+		this.position.y = Math.sin(this.angle * Math.PI / 180) * (this.radius + wobble*4);
 
 		this.rotation = this.angle*Math.PI/180+Math.PI/2;
 

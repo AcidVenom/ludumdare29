@@ -23,7 +23,7 @@ function main()
 			this.world = new World();
 			this.player = new Player(Math.random() * 360, this.world);
 
-			for (var i = 0; i < 50; ++i) {
+			for (var i = 0; i < 10; ++i) {
 				this.enemies.push(new Enemy(Math.random() * 360, this.world));
 			}
 		},
@@ -34,7 +34,7 @@ function main()
 			}
 		},
 		destroy: function() {
-
+			Game.PIXI.Camera.children = [];
 		}
 	});
 
