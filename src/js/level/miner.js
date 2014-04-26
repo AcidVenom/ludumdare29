@@ -11,7 +11,7 @@ var Miner = function (angle, world, hotspot) {
 	this.health = new Healthbar(this);
 
 	this.hotspot = hotspot || 0;
-	this.collisionPoint = 265;
+	this.collisionPoint = 260;
 	this.world = world;
 	this.angle = angle || 0;
 	this.radius = this.collisionPoint;
@@ -76,6 +76,8 @@ var Miner = function (angle, world, hotspot) {
 
 	this.scale.x = 0.25;
 	this.scale.y = -0.25;
+	this.targeted = false;
+	this.direction = Math.floor(Math.random()*2);
 
 	this.update = function (data) {
 		this.animations.update(data);
@@ -91,13 +93,43 @@ var Miner = function (angle, world, hotspot) {
 			this.angle = 360;
 		}
 
-		if(this.speed == 0)
+		if(this.targeted)
 		{
-			this.animations.pause('walk');
+			switch(this.direction)
+			{
+				case 0:
+				this.speed = 14*data.dt;
+				break;
+
+				case 1:
+				this.speed = -14*data.dt;
+				break;
+			}
 		}
 		else
 		{
-			this.animations.resume('walk');
+			this.speed = 0;
+		}
+
+		if(this.speed == 0)
+		{
+			this.animations.setAnimation("mine");
+			this.animations.setFramerate("mine",0.3);
+			this.direction = Math.floor(Math.random()*2);
+		}
+		else
+		{
+			this.animations.setAnimation("walk");
+			this.animations.setFramerate("mine",0.2);
+		}
+
+		if(this.speed > 0)
+		{
+			this.scale.x = -0.25;
+		}
+		if(this.speed < 0)
+		{
+			this.scale.x = 0.25;
 		}
 
 		var wobble = Math.sin(this.angle*Math.PI/180*50);
