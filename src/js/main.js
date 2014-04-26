@@ -4,6 +4,7 @@ require(
 		"level/world.js", 
 		"level/player.js",
 		"level/enemy.js",
+		"level/healthbar.js",
 		"gameobject.js",
 		"level/cameracontroller.js"
 	], main);
@@ -14,19 +15,24 @@ function main()
     	world: null,
     	player: null,
     	enemies: [],
+    	players: [],
 
 		name: "level",
 
 		initialise: function() {
 			this.world = new World();
-			this.player = new Player(0, this.world);
+			for (var i = 0; i < 1; i++) {
+				this.players.push(new Player(Math.random() * 360, this.world));
+			}
 
-			for (var i = 0; i < 360; ++i) {
+			for (var i = 0; i < 50; ++i) {
 				this.enemies.push(new Enemy(Math.random() * 360, this.world));
 			}
 		},
 		update: function(data) {
-			this.player.update(data);
+			for (var i = 0; i < 1; i++) {
+				this.players[i].update(data);
+			}
 			for (var i = 0; i < this.enemies.length; ++i) {
 				this.enemies[i].update(data);
 			}

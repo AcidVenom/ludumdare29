@@ -2,11 +2,13 @@ var Enemy = function (angle, world) {
 	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprCharacterWalk.png']);
 
 	this.animations = {};
+	this.health = {};
 
 	extend(this, sprite);
 	extend(this.animations, AnimationManager());
+	extend(this.health, Healthbar(this));
 
-	this.collisionPoint = 255;
+	this.collisionPoint = 265;
 	this.world = world;
 	this.angle = angle;
 	this.radius = this.collisionPoint;
@@ -45,45 +47,46 @@ var Enemy = function (angle, world) {
         reversed: false
 	});
 
-	this.scale.x = 0.5;
-	this.scale.y = -0.5;
+	this.scale.x = 0.35;
+	this.scale.y = -0.35;
 
 	this.animations.play("walk");
 
 	this.update = function(data)
 	{
 		this.animations.update(data);
+		this.health.updateHealthbar(data);
 		if(Input.isDown("a"))
 		{
 			if(this.speed > 0)
 			{
-				//this.speed = 0;
+				this.speed = 0;
 			}
 			if (this.speed > -this.maxSpeed)
 			{
-				//this.speed-=0.5;
+				this.speed-=0.5;
 			}
 		}
-		else if(Input.isDown("a"))
+		else if(Input.isDown("d"))
 		{
 			if(this.speed < 0)
 			{
-				//this.speed = 0;
+				this.speed = 0;
 			}
 			if (this.speed < this.maxSpeed)
 			{
-				//this.speed+=0.5;
+				this.speed+=0.5;
 			}
 		}
 		else
 		{
 			if(this.speed > 0)
 			{
-				//this.speed-=0.5;
+				this.speed-=0.5;
 			}
 			else if(this.speed < 0)
 			{
-				//this.speed+=0.5;
+				this.speed+=0.5;
 			}
 		}
 
@@ -117,11 +120,13 @@ var Enemy = function (angle, world) {
 
 		if(this.speed > 0)
 		{
-			this.scale.x = -0.5;
+			this.scale.x = -0.35;
+			this.health.__graphics.scale.x = -1;
 		}
 		else if(this.speed < 0)
 		{
-			this.scale.x = 0.5;
+			this.scale.x = 0.35;
+			this.health.__graphics.scale.x = 1;
 		}
 
 		this.position.x = this.world.position.x + Math.cos(this.angle * Math.PI / 180) * this.radius;

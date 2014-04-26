@@ -171,7 +171,7 @@ var Player = function(angle, world)
 
 		var distance = Math.sqrt(dx*dx + dy*dy);
 
-		var movement = Math.Slerp(Game.PIXI.Camera.position.x,Game.PIXI.Camera.position.y,590-this.position.x/4,360-this.position.y/4,distance/2*data.dt);
+		var movement = Math.Slerp(Game.PIXI.Camera.position.x, Game.PIXI.Camera.position.y, 590-this.position.x / 4, 360 - this.position.y / 4, distance / 2 * data.dt);
 
 		if (movement !== null)
 		{
