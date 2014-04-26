@@ -21,13 +21,15 @@ function main()
 			this.world = new World();
 			this.player = new Player(0, this.world);
 
-			//for (var i = 0; i < 5; ++i) {
-				this.enemy = new Enemy(0, this.world);
-			//
+			for (var i = 0; i < 360; ++i) {
+				this.enemies.push(new Enemy(Math.random() * 360, this.world));
+			}
 		},
 		update: function(data) {
 			this.player.update(data);
-			this.enemy.update(data);
+			for (var i = 0; i < this.enemies.length; ++i) {
+				this.enemies[i].update(data);
+			}
 		},
 		destroy: function() {
 

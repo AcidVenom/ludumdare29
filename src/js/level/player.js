@@ -38,7 +38,6 @@ var Player = function(angle, world)
             height: 170
 		});
 	}
-	console.log(frames);
 	this.animations.mainSprite = this;
 	this.animations.add("walk",{
         frameRate: 0.1,

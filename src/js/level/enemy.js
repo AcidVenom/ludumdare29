@@ -23,7 +23,7 @@ var Enemy = function (angle, world) {
 	this.speed = 0;
 	this.maxSpeed = 8;
 
-	this.jumpHeight = 10;
+	this.jumpHeight = -10;
 
 	var frames = [];
 
