@@ -129,7 +129,7 @@ var Player = function(angle, world)
 					player.particles.smashExplosion = player.particles.createEmitter({
 						parent: Game.PIXI.Camera,
 						texture: PIXI.TextureCache[Utils.Assets.Images + 'level/particles/partRock1.png'],
-						instantEmitSize: 1,
+						instantEmitSize: 100,
 						lifetime: 50000000,
 						onParticleInitialization: function (particle) {
 							particle.position = {
@@ -141,35 +141,59 @@ var Player = function(angle, world)
 							particle.anchor.x = 0.5;
 							particle.anchor.y = 0.5;
 							particle.targetAngle = player.angle + (Math.round(Math.random() * 20) - 10) % 360;
-							particle.velocity = 10;
-							particle.bounce = 10;
 							particle.radius = player.radius;
 							particle.scale.x = 0.5;
 							particle.scale.y = 0.5;
-							particle.__z = 10000000;
+							particle.velocity = 0;
+							particle.bounce = 5+Math.floor(Math.random()*20);
+							particle.direction = Math.floor(Math.random()*2);
 						},
 						onParticleUpdate: function (particle, data) {
-							if (particle.radius <= player.collisionPoint)
+							if(particle.direction == 0)
 							{
-								if(particle.bounce > 1)
-								{
-									particle.bounce -= 1;
-									particle.velocity -= particle.bounce*particle.bounce;
-									particle.radius = player.collisionPoint+1;
-								}
-								else
-								{
-									particle.radius = player.collisionPoint;
-								}
+								particle.targetAngle+=particle.bounce/30;
+								particle.rotation += 0.1;
+							}
+							else
+							{
+								particle.targetAngle-=particle.bounce/30;
+								particle.rotation -= 0.1;
 							}
 
-							if (particle.radius > player.collisionPoint)
+							if(particle.alpha > 0)
 							{
-								particle.velocity += 4;
-								particle.radius -= particle.velocity;
+								particle.alpha-=0.001;
+
+								particle.scale.x-=0.0025;
+								particle.scale.y-=0.0025;
 							}
 
-							particle.targetAngle+=1;
+							if(particle.alpha <= 0)
+							{
+								particle.alpha = 0;
+
+								particle.scale.x = 0;
+								particle.scale.y = 0;
+							}
+
+							if(particle.radius > player.collisionPoint)
+							{
+								particle.velocity+=0.5;
+								particle.radius -= particle.velocity-Math.random()*5;
+							}
+
+							if(particle.radius <= player.collisionPoint && particle.bounce > 0)
+							{
+								particle.radius = player.collisionPoint+1;
+								particle.bounce -= 5;
+								particle.velocity = -particle.bounce/2;
+							}
+
+							if(particle.bounce < 1)
+							{
+								particle.velocity = 0;
+								particle.bounce = 0;
+							}
 
 							particle.position = {
 								x: Math.cos(particle.targetAngle * Math.PI / 180) * particle.radius,
@@ -177,6 +201,7 @@ var Player = function(angle, world)
 							};
 						}
 					});
+					player.particles.smashExplosion.__z = 10000;
 
 	        		CameraController.shake(45, 0.03, 12, function () {
 			        	TweenLite.to(
@@ -196,7 +221,7 @@ var Player = function(angle, world)
 
 									calledBack = false;
 
-									//StateManager.getState().player.cameraUnlocked = false;
+									StateManager.getState().player.cameraUnlocked = false;
 			        			}
 			        		}
 			        	);
