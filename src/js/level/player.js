@@ -209,6 +209,7 @@ var Player = function(angle, world)
 							particle.velocity = 0;
 							particle.bounce = 5+Math.floor(Math.random()*20);
 							particle.direction = Math.floor(Math.random()*2);
+							particle.active = true;
 						},
 						onParticleUpdate: function (particle, data) {
 							if(particle.direction == 0)
@@ -222,15 +223,15 @@ var Player = function(angle, world)
 								particle.rotation -= 0.1;
 							}
 
-							if(particle.alpha > 0)
+							if(particle.scale.x > 0)
 							{
 								particle.alpha-=0.001;
 
-								particle.scale.x-=0.0025;
-								particle.scale.y-=0.0025;
+								particle.scale.x-=0.005;
+								particle.scale.y-=0.005;
 							}
 
-							if(particle.alpha <= 0)
+							if(particle.scale.x <= 0)
 							{
 								particle.alpha = 0;
 
@@ -255,6 +256,9 @@ var Player = function(angle, world)
 							{
 								particle.velocity = 0;
 								particle.bounce = 0;
+								particle.radius = player.collisionPoint;
+
+								particle.active = false;
 							}
 
 							particle.position = {

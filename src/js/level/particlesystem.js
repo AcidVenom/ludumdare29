@@ -52,6 +52,7 @@ var Emitter = function (settings) {
 
 			for (var i = 0; i < settings.instantEmitSize; i++) {
 				var newParticle = new Particle(particle, settings);
+				newParticle.emitter = container;
 				currentParticles.push(newParticle);
 				container.addChild(newParticle);
 			}
@@ -67,9 +68,10 @@ var Emitter = function (settings) {
 		for (var i = 0; i < currentParticles.length; i++) {
 			currentParticles[i].update(data);
 
-			if (currentParticles[i].lifetime <= 0 && currentParticles[i].active) {
+			if (currentParticles[i].lifetime <= 0 || !currentParticles[i].active) {
 				currentParticles[i].active = false;
 				container.removeChild(currentParticles[i]);
+				currentParticles.splice(i, 1);
 			}
 		}
 
@@ -79,6 +81,7 @@ var Emitter = function (settings) {
 
 			for (var i = 0; i < settings.emitSize; i++) {
 				var newParticle = new Particle(particle, settings);
+				newParticle.emitter = container;
 				currentParticles.push(newParticle);
 				container.addChild(newParticle);
 			}
