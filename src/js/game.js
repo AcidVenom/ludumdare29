@@ -39,6 +39,8 @@ var Game = {
 
             Game.sort();
 
+            extend(Game.PIXI.Camera, GameObject());
+            Game.PIXI.Camera.setZ(450);
             Game.PIXI.Stage.addChild(Game.PIXI.Camera);
 
             requestAnimationFrame(Game.update);
@@ -81,7 +83,6 @@ var Game = {
             Game.PIXI.Stage.children.sort(function (a, b) {
                 return a.__z - b.__z;
             });
-            return Game._objects.slice();
         }
     },
     resizeGame: function () {
