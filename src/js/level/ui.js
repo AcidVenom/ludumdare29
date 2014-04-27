@@ -31,7 +31,6 @@ var StabilityBar = function(val)
 	});
 
 	this.textGoblins.position.x -= 30;
-	this.textGoblins.position.y -= 12;
 
 
 	this.textMiners = new PIXI.Text("");
@@ -42,21 +41,26 @@ var StabilityBar = function(val)
 	});
 
 	this.textMiners.position.x += 20;
-	this.textMiners.position.y -= 12;
+	this.timer = 0;
 
 	this.update = function()
 	{
+		this.timer++;
 		this.value = StateManager.getState().stability;
 		this.bar.scale.x = 138/this.maxValue * this.value;
 
 		this.textGoblins.setText(StateManager.getState().enemies.length);
 		this.textMiners.setText(StateManager.getState().miners.length);
+
+		this.rotation = Math.sin(this.timer*0.01)/4;
+		this.scale.x = 1+Math.abs(Math.sin(this.timer*0.01))/16;
+		this.scale.y = 1+Math.abs(Math.sin(this.timer*0.01))/16;
 	}
 
 	this.textGoblins.__z = 2000;
 	this.textMiners.__z = 2000;
-	Game.PIXI.Camera.addChild(this.textGoblins);
-	Game.PIXI.Camera.addChild(this.textMiners);
+	this.addChild(this.textGoblins);
+	this.addChild(this.textMiners);
 }
 
 var UI = function(val)
