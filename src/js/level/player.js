@@ -3,9 +3,11 @@ var Player = function(angle, world)
 	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprCharacterWalk.png']);
 
 	this.animations = {};
+	this.particles = {};
 
 	extend(this,sprite);
 	extend(this.animations, AnimationManager());
+	extend(this.particles, ParticleSystem());
 
 	this.collisionPoint = 330;
 	this.world = world;
@@ -118,6 +120,10 @@ var Player = function(angle, world)
 					}
 
 					StateManager.getState().world.createImpact(StateManager.getState().player.angle,400,150);
+
+					player.particles.smashExplosion = player.particles.createEmitter({
+						texture: []
+					});
 
 	        		CameraController.shake(45, 0.03, 12, function () {
 			        	TweenLite.to(
@@ -255,6 +261,7 @@ var Player = function(angle, world)
 	this.update = function(data)
 	{
 		this.animations.update(data);
+		this.particles.update(data);
 
 		StateManager.getState().world.mountains.rotation+=0.0008;
 		StateManager.getState().world.treeLine2.rotation-=0.0004;
