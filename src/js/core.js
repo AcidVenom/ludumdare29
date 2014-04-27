@@ -19,7 +19,7 @@
 				'./src/js/assets.js',
 				'./src/js/statemanager.js',
 				'./src/js/input.js',
-				'./src/js/gameobject.js'
+				'./src/js/gameobject.js',
 				'./src/js/main.js'
 			],
 			loadScript = function (i) {
