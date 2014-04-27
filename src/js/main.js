@@ -38,7 +38,7 @@ function main()
 				this.miners.push(new Miner(Math.random() * 360, this.world, this.hotspotMiners))
 			}
 
-			for (var i = 0; i < 10; ++i) {
+			for (var i = 0; i < 20; ++i) {
 				this.enemies.push(new Enemy(Math.random() * 360, this.world, this.hotspotEnemies));
 			}
 
@@ -54,6 +54,7 @@ function main()
 				this.enemies[i].update(data);
 			}
 			this.ui.update();
+			this.world.update();
 		},
 		destroy: function() {
 			Game.PIXI.Camera.children = [];

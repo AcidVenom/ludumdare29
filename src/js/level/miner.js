@@ -5,8 +5,9 @@ var Miner = function (angle, world, hotspot) {
 
 	extend(this, sprite);
 	extend(this.animations, AnimationManager());
+	extend(this, GameObject());
 
-
+	this.setZ(200);
 	this.health = new Healthbar(this);
 
 	this.hotspot = hotspot || 0;
@@ -29,6 +30,7 @@ var Miner = function (angle, world, hotspot) {
 
 	this.jumpHeight = -10;
 	this.dead = false;
+	this.timer = 0;
 
 	var frames = [];
 
@@ -147,12 +149,12 @@ var Miner = function (angle, world, hotspot) {
 			if(this.speed > 0)
 			{
 				this.scale.x = -0.25;
-				this.health.__graphics.scale.x = -1;
+				this.health.__graphics.scale.x = 1;
 			}
 			if(this.speed < 0)
 			{
 				this.scale.x = 0.25;
-				this.health.__graphics.scale.x = 1;
+				this.health.__graphics.scale.x = -1;
 			}
 
 			var wobble = Math.sin(this.angle*Math.PI/180*50);
@@ -164,6 +166,15 @@ var Miner = function (angle, world, hotspot) {
 			this.rotation = this.angle*Math.PI/180+Math.PI/2;
 
 			this.angle+=this.speed*data.dt;
+
+			if(this.timer > 0)
+			{
+				this.timer--;
+			}
+			if(this.timer == 0)
+			{
+				this.tint = 0xFFFFFF;
+			}
 		}
 		else
 		{

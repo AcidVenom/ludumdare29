@@ -16,6 +16,7 @@ var Player = function(angle, world)
 	this.position.y = 0;
 	this.followPoint = {x: 0, y: 0};
 	this.puffs = [];
+	this.__z = 6;
 
 	this.anchor.x = 0.5;
 	this.anchor.y = 0.5;
@@ -73,7 +74,11 @@ var Player = function(angle, world)
         frames: frames,
         loop: true,
         reversed: false,
-        cb: function(){ StateManager.getState().player.slamming = false; StateManager.getState().player.animations.play("walk"); }
+        cb: function(){ 
+        	StateManager.getState().player.slamming = false; 
+        	StateManager.getState().player.animations.play("walk"); 
+        	StateManager.getState().world.createImpact(StateManager.getState().player.angle,112,40);
+        }
 	});
 
 	this.setTexture(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprCharacterGodSmash.png']);
@@ -111,6 +116,8 @@ var Player = function(angle, world)
 					{
 						StateManager.getState().stability -= 60;
 					}
+
+					StateManager.getState().world.createImpact(StateManager.getState().player.angle,10000,1);
 
 	        		CameraController.shake(45, 0.03, 12, function () {
 			        	TweenLite.to(
@@ -296,13 +303,13 @@ var Player = function(angle, world)
 				this.slamming = true;
 				this.animations.setAnimation("slam");
 				this.speed = 0;
-				if(StateManager.getState().stability - 20 <= 0)
+				if(StateManager.getState().stability - 5 <= 0)
 				{
 					StateManager.getState().stability = 0;
 				}
 				else
 				{
-					StateManager.getState().stability -= 20;
+					StateManager.getState().stability -= 5;
 				}
 			}
 		}

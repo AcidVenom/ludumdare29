@@ -83,6 +83,10 @@ var Game = {
             Game.PIXI.Stage.children.sort(function (a, b) {
                 return a.__z - b.__z;
             });
+
+            Game.PIXI.Camera.children.sort(function (a, b) {
+                return a.__z - b.__z;
+            });
         }
     },
     resizeGame: function () {

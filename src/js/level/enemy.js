@@ -5,7 +5,9 @@ var Enemy = function (angle, world) {
 
 	extend(this, sprite);
 	extend(this.animations, AnimationManager());
+	extend(this, GameObject());
 
+	this.setZ(100);
 	this.health = new Healthbar(this);
 
 	this.collisionPoint = 265;
@@ -26,6 +28,7 @@ var Enemy = function (angle, world) {
 	this.maxSpeed = 2;
 
 	this.jumpHeight = -10;
+	this.dead = false;
 
 	var frames = [];
 
@@ -95,122 +98,203 @@ var Enemy = function (angle, world) {
 	this.update = function(data)
 	{
 		this.animations.update(data);
-		this.timer++;
-
-		if(this.angle > 360)
+		if(!this.dead)
 		{
-			this.angle = 1;
-		}
-
-		if(this.angle < 0)
-		{
-			this.angle = 359;
-		}
-
-		this.health.updateHealthbar(data);
+			this.timer++;
 		
-
-		if(!this.target)
-		{
-			this.target = this.findNearestMiner();
-		}
-
-		if(this.target && this.target.miner)
-		{
-			var dx = this.target.miner.position.x - this.position.x;
-			var dy = this.target.miner.position.y - this.position.y;
-
-			this.target.distance = Math.sqrt(dx*dx + dy*dy);
-			if(this.target.distance > 12)
+			if(this.angle > 360)
 			{
-				this.target.miner.targeted = true;
-				if (this.angle - 180 < this.target.miner.angle - 180)
+				this.angle = 1;
+			}
+
+			if(this.angle < 0)
+			{
+				this.angle = 359;
+			}
+
+			if (this.health.__health < 1)
+			{
+				this.timer = 0;
+				this.dead = true;
+			}
+			this.tint = 0xFFFFFF;
+
+			for (var i = 0; i < StateManager.getState().world.impactAreas.length; ++i)
+			{
+				var impact = StateManager.getState().world.impactAreas[i];
+
+				var dx = impact.x - this.position.x;
+				var dy = impact.y - this.position.y;
+
+				var dist = Math.sqrt(dx*dx + dy*dy);
+
+				if(dist < impact.range)
 				{
-					this.speed = 10*data.dt;
+					this.velocity = -8*dist/impact.range;
+					this.radius--;
+					this.tint = 0xFF0000;
+					if(this.health.__health - impact.damage*dist/impact.range > 0)
+					{
+						this.health.__health-=impact.damage*dist/impact.range;
+					}
+					else{
+						this.health.__health = 0;
+					}
+				}
+			}
+
+			this.health.updateHealthbar(data);
+
+			if(!this.target)
+			{
+				this.target = this.findNearestMiner();
+			}
+
+			if(this.target && this.target.miner)
+			{
+				var dx = this.target.miner.position.x - this.position.x;
+				var dy = this.target.miner.position.y - this.position.y;
+
+				this.target.distance = Math.sqrt(dx*dx + dy*dy);
+				if(this.target.distance > 12)
+				{
+					this.target.miner.targeted = true;
+					if (this.angle - 180 < this.target.miner.angle - 180)
+					{
+						this.speed = 10*data.dt;
+					}
+
+					if (this.angle - 180 > this.target.miner.angle - 180)
+					{
+						this.speed = -10*data.dt;
+					}
+				}
+				else
+				{
+					this.speed = 0;
+					if (this.target.miner.health.__health > 0)
+					{
+						if(this.target.miner.radius == this.target.miner.collisionPoint)
+						{
+							this.target.miner.health.__health-=5;
+							this.target.miner.radius--;
+							this.target.miner.velocity = -8
+							this.target.miner.tint = 0xFF0000;
+							this.target.miner.timer = 3;
+						}
+					}
 				}
 
-				if (this.angle - 180 > this.target.miner.angle - 180)
+				if(this.target.distance > 300 || Math.floor(Math.random()*101) < 2)
 				{
-					this.speed = -10*data.dt;
+					this.target.miner.targeted = false;
+					this.target = undefined;
+					this.speed = this.speed*-1;
 				}
 			}
 			else
 			{
-				this.speed = 0;
-				if (this.target.miner.health.__health > 0)
-					this.target.miner.health.damage();
-			}
-
-			if(this.target.distance > 300 || Math.floor(Math.random()*101) < 2)
-			{
-				this.target.miner.targeted = false;
-				this.target = undefined;
-				this.speed = this.speed*-1;
-			}
-		}
-		else
-		{
-			if(this.timer >= 1000)
-			{
-				this.move = Math.floor(Math.random()*3);
-				switch(this.move)
+				if(this.timer >= 1000)
 				{
-					case 0:
-					this.speed = -10*data.dt;
-					break;
+					this.move = Math.floor(Math.random()*3);
+					switch(this.move)
+					{
+						case 0:
+						this.speed = -10*data.dt;
+						break;
 
-					case 1:
-					this.speed = 10*data.dt;
-					break;
+						case 1:
+						this.speed = 10*data.dt;
+						break;
 
-					default:
-					this.speed = 0;
-					break;
+						default:
+						this.speed = 0;
+						break;
+					}
+
+					this.timer = 0;
 				}
-
-				this.timer = 0;
 			}
-		}
 
-		if(this.speed == 0)
-		{
-			this.animations.pause("walk");
+			if(this.speed == 0)
+			{
+				this.animations.pause("walk");
+			}
+			else
+			{
+				this.animations.resume("walk");
+			}
+
+			if(this.radius < this.collisionPoint)
+			{
+				this.velocity += 5 * data.dt;
+				this.radius += this.velocity;
+			}
+
+			if(this.radius > this.collisionPoint)
+			{
+				this.radius = this.collisionPoint;
+			}
+
+			if(this.speed > 0)
+			{
+				this.scale.x = -0.25;
+				this.health.__graphics.scale.x = -1;
+			}
+			else if(this.speed < 0)
+			{
+				this.scale.x = 0.25;
+				this.health.__graphics.scale.x = 1;
+			}
+
+			var wobble = Math.sin(this.angle*Math.PI/180*50);
+
+			this.position.x = this.world.position.x + Math.cos(this.angle * Math.PI / 180) * this.radius;
+			this.position.y = this.world.position.y + Math.sin(this.angle * Math.PI / 180) * (this.radius + wobble*4);
+
+			this.rotation = this.angle*Math.PI/180+Math.PI/2;
+
+			this.angle+=this.speed*data.dt;
+
 		}
 		else
 		{
-			this.animations.resume("walk");
+			if(this.timer == 0)
+			{
+				this.tweenAlpha = {a: 1}
+				TweenLite.to(
+					this.position,
+					0.3,
+	        		{
+	        			x: 0,
+	        			y: 0,
+	        			ease: Quad.easeIn
+	        		}
+				);
+
+				TweenLite.to(
+					this.tweenAlpha,
+					0.3,
+	        		{
+	        			a: 0,
+	        			ease: Quad.easeIn
+	        		}
+				);
+			}
+			this.timer = 1;
+			this.alpha = this.tweenAlpha.a;
+
+			if(this.alpha == 0)
+			{
+				if(this.target)
+				{
+					this.target.miner.targeted = false;
+					this.target = undefined;
+				}
+				StateManager.getState().enemies.splice(StateManager.getState().enemies.indexOf(this),1);
+				Game.PIXI.Camera.removeChild(this);
+			}
 		}
-
-		if(this.radius < this.collisionPoint)
-		{
-			this.velocity += 5 * data.dt;
-			this.radius += this.velocity;
-		}
-
-		if(this.radius > this.collisionPoint)
-		{
-			this.radius = this.collisionPoint;
-		}
-
-		if(this.speed > 0)
-		{
-			this.scale.x = -0.25;
-			this.health.__graphics.scale.x = -1;
-		}
-		else if(this.speed < 0)
-		{
-			this.scale.x = 0.25;
-			this.health.__graphics.scale.x = 1;
-		}
-
-		var wobble = Math.sin(this.angle*Math.PI/180*50);
-
-		this.position.x = this.world.position.x + Math.cos(this.angle * Math.PI / 180) * this.radius;
-		this.position.y = this.world.position.y + Math.sin(this.angle * Math.PI / 180) * (this.radius + wobble*4);
-
-		this.rotation = this.angle*Math.PI/180+Math.PI/2;
-
-		this.angle+=this.speed*data.dt;
 	}
 
 	Game.PIXI.Camera.addChild(this);

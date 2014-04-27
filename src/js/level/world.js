@@ -1,3 +1,22 @@
+var ImpactArea = function(angle,range,damage,world)
+{
+    this.range = range;
+    this.frame = 0;
+    this.world = world;
+    this.damage = damage;
+
+    this.x = Math.cos(angle*Math.PI/180)*StateManager.getState().player.collisionPoint;
+    this.y = Math.sin(angle*Math.PI/180)*StateManager.getState().player.collisionPoint;
+
+    this.update = function()
+    {
+        if(++this.frame == 2)
+        {
+            this.world.impactAreas.splice(this.world.impactAreas.indexOf(this),1);
+        }
+    }
+}
+
 var World = function()
 {
 	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprWorld.png']),
@@ -59,6 +78,30 @@ var World = function()
 
     this.clouds.pivot.x = 0.5;
     this.clouds.pivot.y = 0.5
+
+    this.createImpact = function(angle,range,damage)
+    {
+        var impact = new ImpactArea(angle,range,damage,this);
+        this.impactAreas.push(impact);
+    }
+
+    this.update = function()
+    {
+        for(var i = 0; i < this.impactAreas.length; ++i)
+        {
+            this.impactAreas[i].update();
+        }
+    }
+
+    this.impactAreas = [];
+
+    this.background.__z = 0;
+    this.mountains.__z = 1
+    this.treeLine2.__z = 2;
+    this.ground.__z = 3;
+    this.treeLine1.__z = 4;
+
+    this.__z = 5;
 
     Game.PIXI.Camera.addChild(this.background);
     
