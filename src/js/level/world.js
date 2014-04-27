@@ -61,9 +61,10 @@ var World = function()
     this.clouds.pivot.y = 0.5
 
     Game.PIXI.Camera.addChild(this.background);
-    Game.PIXI.Camera.addChild(this.ground);
+    
     Game.PIXI.Camera.addChild(this.mountains);
     Game.PIXI.Camera.addChild(this.treeLine2);
+    Game.PIXI.Camera.addChild(this.ground);
     Game.PIXI.Camera.addChild(this.treeLine1);
     Game.PIXI.Camera.addChild(this);
     

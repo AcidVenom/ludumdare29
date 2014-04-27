@@ -81,6 +81,11 @@ var Player = function(angle, world)
 	{
 		this.animations.update(data);
 
+		StateManager.getState().world.mountains.rotation+=0.0008;
+		StateManager.getState().world.treeLine2.rotation-=0.0004;
+		StateManager.getState().world.treeLine2.rotation-=0.0020;
+		StateManager.getState().world.clouds.rotation+=0.004;
+
 		if(this.radius == this.collisionPoint)
 		{
 			this.puffs.push(new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprPuff.png']));
@@ -151,9 +156,7 @@ var Player = function(angle, world)
 
 			if(Input.isDown("left"))
 			{
-				StateManager.getState().world.mountains.rotation+=0.0025;
-				StateManager.getState().world.treeLine2.rotation-=0.005;
-				StateManager.getState().world.clouds.rotation+=0.01;
+				
 				if(this.speed > 0)
 				{
 					this.speed = 0;
@@ -166,9 +169,7 @@ var Player = function(angle, world)
 			}
 			else if(Input.isDown("right"))
 			{
-				StateManager.getState().world.mountains.rotation-=0.0025;
-				StateManager.getState().world.treeLine2.rotation+=0.005;
-				StateManager.getState().world.clouds.rotation-=0.01;
+				
 				if(this.speed < 0)
 				{
 					this.speed = 0;
