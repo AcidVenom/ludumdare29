@@ -21,6 +21,12 @@ Game.Assets = {
 		Utils.Assets.Images + 'level/bgTreeLine1.png',
 		Utils.Assets.Images + 'level/bgTreeLine2.png',
 		Utils.Assets.Images + 'level/sprGround.png',
-		Utils.Assets.Images + 'level/fgClouds.png'
+		Utils.Assets.Images + 'level/fgClouds.png',
+		Utils.Assets.Images + 'level/particles/partRock1.png',
+		Utils.Assets.Images + 'level/particles/partRock2.png',
+		Utils.Assets.Images + 'level/particles/partRock3.png',
+		Utils.Assets.Images + 'level/particles/partRock4.png',
+		Utils.Assets.Images + 'level/particles/partRock5.png',
+		Utils.Assets.Images + 'level/particles/partFlash.png',
 	]
 };

@@ -3,9 +3,11 @@ var Player = function(angle, world)
 	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprCharacterWalk.png']);
 
 	this.animations = {};
+	this.particles = {};
 
 	extend(this,sprite);
 	extend(this.animations, AnimationManager());
+	extend(this.particles, ParticleSystem());
 
 	this.collisionPoint = 330;
 	this.world = world;
@@ -108,6 +110,8 @@ var Player = function(angle, world)
 	        	animateHammer(hammer1, -20);
 	        	animateHammer(hammer2, 0);
 	        	animateHammer(hammer3, 20, function () {
+	        		//Game.PIXI.Camera.scale.x = 0.5;
+					//Game.PIXI.Camera.scale.y = 0.5;
 					if(StateManager.getState().stability - 60 <= 0)
 					{
 						StateManager.getState().stability = 0;
@@ -119,13 +123,68 @@ var Player = function(angle, world)
 
 					StateManager.getState().world.createImpact(StateManager.getState().player.angle,400,150);
 
+					if (player.particles.smashExplosion) {
+						player.particles.removeEmitter(player.particles.smashExplosion);
+					};
+					player.particles.smashExplosion = player.particles.createEmitter({
+						parent: Game.PIXI.Camera,
+						texture: PIXI.TextureCache[Utils.Assets.Images + 'level/particles/partRock1.png'],
+						instantEmitSize: 1,
+						lifetime: 50000000,
+						onParticleInitialization: function (particle) {
+							particle.position = {
+								x: Math.cos(player.angle * Math.PI / 180) * (player.radius),
+								y: Math.sin(player.angle * Math.PI / 180) * (player.radius)
+							};
+							particle.pivot.x = 0.5;
+							particle.pivot.y = 0.5;
+							particle.anchor.x = 0.5;
+							particle.anchor.y = 0.5;
+							particle.targetAngle = player.angle + (Math.round(Math.random() * 20) - 10) % 360;
+							particle.velocity = 10;
+							particle.bounce = 10;
+							particle.radius = player.radius;
+							particle.scale.x = 0.5;
+							particle.scale.y = 0.5;
+							particle.__z = 10000000;
+						},
+						onParticleUpdate: function (particle, data) {
+							if (particle.radius <= player.collisionPoint)
+							{
+								if(particle.bounce > 1)
+								{
+									particle.bounce -= 1;
+									particle.velocity -= particle.bounce*particle.bounce;
+									particle.radius = player.collisionPoint+1;
+								}
+								else
+								{
+									particle.radius = player.collisionPoint;
+								}
+							}
+
+							if (particle.radius > player.collisionPoint)
+							{
+								particle.velocity += 4;
+								particle.radius -= particle.velocity;
+							}
+
+							particle.targetAngle+=1;
+
+							particle.position = {
+								x: Math.cos(particle.targetAngle * Math.PI / 180) * particle.radius,
+								y: Math.sin(particle.targetAngle * Math.PI / 180) * particle.radius
+							};
+						}
+					});
+
 	        		CameraController.shake(45, 0.03, 12, function () {
 			        	TweenLite.to(
 			        		player.position,
 			        		0.3,
 			        		{
-			        			x: Math.cos(player.angle * Math.PI / 180) * player.radius,
-			        			y: Math.sin(player.angle * Math.PI / 180) * player.radius,
+			        			x: Math.cos(player.angle * Math.PI / 180) * (player.radius),
+			        			y: Math.sin(player.angle * Math.PI / 180) * (player.radius),
 			        			ease: Quad.easeIn,
 			        			onComplete: function () {
 			        				StateManager.getState().player.scale = {
@@ -137,7 +196,7 @@ var Player = function(angle, world)
 
 									calledBack = false;
 
-									StateManager.getState().player.cameraUnlocked = false;
+									//StateManager.getState().player.cameraUnlocked = false;
 			        			}
 			        		}
 			        	);
@@ -255,6 +314,17 @@ var Player = function(angle, world)
 	this.update = function(data)
 	{
 		this.animations.update(data);
+		this.particles.update(data);
+
+		if(this.angle > 360)
+		{
+			this.angle = 1;
+		}
+
+		if(this.angle < 0)
+		{
+			this.angle = 359;
+		}
 
 		StateManager.getState().world.mountains.rotation+=0.0008;
 		StateManager.getState().world.treeLine2.rotation-=0.0004;

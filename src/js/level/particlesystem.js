@@ -9,7 +9,7 @@ var ParticleSystem = function () {
 		removeEmitter: function (emitter) {
 			for (var i = 0; i < this.__emitters.length; i++) {
 				if (this.__emitters[i] === emitter) {
-					this.__emitters[i].destroy();
+					//this.__emitters[i].destroy();
 					this.__emitters.splice(i, 1);
 					return true;
 				}
@@ -20,7 +20,7 @@ var ParticleSystem = function () {
 			var emitters = this.__emitters.slice();
 			for (var i = 0, i2 = 0; i < emitters.length; i++) {
 				i2++;
-				if (this.__emitters[i2].update(data) !== true) {
+				if (this.__emitters[i].update(data) !== true) {
 					i2--;
 					this.__emitters[i2].destroy();
 					this.__emitters.splice(i2, 1);
@@ -85,6 +85,7 @@ var Emitter = function (settings) {
 		}
 
 		onEmitterUpdate();
+		return true;
 	};
 
 	container.__z = settings.__z || 0;
@@ -101,11 +102,15 @@ var Particle = function (texture, settings) {
 	this.active = true;
 	this.update = function (data) {
 		this.lifetime--;
-		settings.onParticleUpdate(this, data);
+		if (settings.onParticleUpdate) {
+			settings.onParticleUpdate(this, data);
+		}
+
+		return true;
 	};
 
 
 	if (settings.onParticleInitialization) {
-		settings.onParticleInitialization();
+		settings.onParticleInitialization(this);
 	}
 };
