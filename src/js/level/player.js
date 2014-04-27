@@ -528,7 +528,7 @@ var Player = function(angle, world)
 			}
 		}
 
-		if ( StateManager.getState().stability < StateManager.getState().maxStability && !this.smashing && !this.slamming)
+		if ( StateManager.getState().stability < StateManager.getState().maxStability && !this.smashing && !this.slamming && !this._180)
 		{
 			if (StateManager.getState().stability + 0.5 > StateManager.getState().maxStability)
 			{
