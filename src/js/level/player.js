@@ -77,7 +77,7 @@ var Player = function(angle, world)
         cb: function(){ 
         	StateManager.getState().player.slamming = false; 
         	StateManager.getState().player.animations.play("walk"); 
-        	StateManager.getState().world.createImpact(StateManager.getState().player.angle,112,40);
+        	StateManager.getState().world.createImpact(StateManager.getState().player.angle,112,80);
         }
 	});
 
@@ -117,7 +117,7 @@ var Player = function(angle, world)
 						StateManager.getState().stability -= 60;
 					}
 
-					StateManager.getState().world.createImpact(StateManager.getState().player.angle,10000,1);
+					StateManager.getState().world.createImpact(StateManager.getState().player.angle,400,150);
 
 	        		CameraController.shake(45, 0.03, 12, function () {
 			        	TweenLite.to(

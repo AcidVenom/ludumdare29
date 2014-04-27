@@ -31,6 +31,7 @@ var Miner = function (angle, world, hotspot) {
 	this.jumpHeight = -10;
 	this.dead = false;
 	this.timer = 0;
+	this.alpha = 0;
 
 	var frames = [];
 
@@ -88,6 +89,11 @@ var Miner = function (angle, world, hotspot) {
 		if (this.health.__health <= 0)
 		{
 			this.dead = true;
+		}
+
+		if (this.alpha < 1)
+		{
+			this.alpha+=0.05;
 		}
 
 		if(!this.dead)

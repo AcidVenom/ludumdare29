@@ -77,7 +77,9 @@ var World = function()
     this.clouds.anchor.y = 0.5;
 
     this.clouds.pivot.x = 0.5;
-    this.clouds.pivot.y = 0.5
+    this.clouds.pivot.y = 0.5;
+
+    this.wave = 0;
 
     this.createImpact = function(angle,range,damage)
     {
@@ -85,11 +87,53 @@ var World = function()
         this.impactAreas.push(impact);
     }
 
+    this.spawnMiners = function()
+    {
+        for (var i = 0; i < 3; ++i) {
+            StateManager.getState().miners.push(new Miner(Math.random() * 360, this, StateManager.getState().hotspotMiners));
+            StateManager.getState().miners[StateManager.getState().miners.length-1].alpha = 0;
+        }
+    }
+
+    this.spawnEnemies = function()
+    {
+        for(var i = 0; i < 1+Math.floor(this.wave*0.05*this.wave*0.75); ++i)
+        {
+            StateManager.getState().enemies.push(new Enemy(Math.random()*360,this,StateManager.getState().hotspotEnemies));
+            StateManager.getState().enemies[StateManager.getState().enemies.length-1].alpha = 0;
+        }
+    }
+
     this.update = function()
     {
         for(var i = 0; i < this.impactAreas.length; ++i)
         {
             this.impactAreas[i].update();
+        }
+
+        if (StateManager.getState().enemies.length == 0)
+        {
+            this.wave++;
+            this.spawnEnemies();
+
+            if(this.wave % 5 == 0)
+            {
+                this.spawnMiners();
+            }
+
+            for (var i = 0; i < StateManager.getState().miners.length; ++i) {
+                var miner = StateManager.getState().miners[i];
+
+                if(miner.health.__health + 10 > 100)
+                {
+                    miner.health.__health = 100;
+                }
+                else
+                {
+                    miner.health.__health+=10;
+                }
+                miner.health.updateHealthbar();
+            }
         }
     }
 
@@ -112,4 +156,7 @@ var World = function()
     Game.PIXI.Camera.addChild(this.treeLine1);
     Game.PIXI.Camera.addChild(this.clouds);
     Game.PIXI.Camera.addChild(this);
+
+    this.spawnEnemies();
+    this.spawnMiners();
 }

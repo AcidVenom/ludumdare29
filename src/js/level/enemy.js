@@ -60,6 +60,7 @@ var Enemy = function (angle, world) {
 
 	this.animations.play("walk");
 	this.target = undefined;
+	this.alpha = 0;
 
 	this.findNearestMiner = function()
 	{
@@ -100,6 +101,10 @@ var Enemy = function (angle, world) {
 		this.animations.update(data);
 		if(!this.dead)
 		{
+			if(this.alpha < 1)
+			{
+				this.alpha+=0.05;
+			}
 			this.timer++;
 		
 			if(this.angle > 360)
@@ -130,12 +135,12 @@ var Enemy = function (angle, world) {
 
 				if(dist < impact.range)
 				{
-					this.velocity = -8*dist/impact.range;
+					this.velocity = -8*impact.range/dist/2;
 					this.radius--;
 					this.tint = 0xFF0000;
-					if(this.health.__health - impact.damage*dist/impact.range > 0)
+					if(this.health.__health - impact.damage*(1-dist/impact.range) > 0)
 					{
-						this.health.__health-=impact.damage*dist/impact.range;
+						this.health.__health-=impact.damage*(1-dist/impact.range);
 					}
 					else{
 						this.health.__health = 0;

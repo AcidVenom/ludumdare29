@@ -16,7 +16,7 @@ var Game = {
     AUTOSORT: true,
     initialise: function () {
         Game.PIXI = {
-            Stage: new PIXI.Stage(0x00FFA7, true),
+            Stage: new PIXI.Stage(0x000000, true),
             Renderer: PIXI.autoDetectRenderer(
                 1280,
                 720,
