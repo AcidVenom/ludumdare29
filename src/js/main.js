@@ -8,7 +8,8 @@ require(
 		"level/healthbar.js",
 		"gameobject.js",
 		"level/cameracontroller.js",
-		"level/ui.js"
+		"level/ui.js",
+		"level/particlesystem.js"
 	], main);
 
 function main()
@@ -34,8 +35,9 @@ function main()
 			this.world = new World();
 			this.player = new Player(Math.random() * 360, this.world);
 			this.ui = new UI(this.stability);
+
 			for (var i = 0; i < 10; ++i) {
-				this.miners.push(new Miner(Math.random() * 360, this.world, this.hotspotMiners))
+				this.miners.push(new Miner(Math.random() * 360, this.world, this.hotspotMiners));
 			}
 
 			for (var i = 0; i < 10; ++i) {
@@ -46,6 +48,11 @@ function main()
 		},
 		update: function(data) {
 			this.player.update(data);
+
+			if (Input.isDown('b')) {
+				this.myPartEmitter.position.x -= 1;
+			}
+
 			for (var i = 0; i < this.miners.length; ++i) {
 				this.miners[i].update(data);
 			}
