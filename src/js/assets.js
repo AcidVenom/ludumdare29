@@ -9,11 +9,12 @@ Game.Assets = {
 		Utils.Assets.Images + 'level/characters/sprCharacterWalk.png',
 		Utils.Assets.Images + 'level/characters/sprCharacterSlam.png',
 		Utils.Assets.Images + 'level/characters/sprCharacterGodSmash.png',
+		Utils.Assets.Images + 'level/characters/sprCharacter180.png',
 		Utils.Assets.Images + 'level/characters/sprGoblinWalk.png',
 		Utils.Assets.Images + 'level/characters/sprMinerWalk.png',
 		Utils.Assets.Images + 'level/characters/sprMinerMine.png',
 		Utils.Assets.Images + 'level/sprPuff.png',
-		Utils.Assets.Images + 'level/ui/sprStabilityMeter.png',
+		Utils.Assets.Images + 'level/ui/sprGui.png',
 		Utils.Assets.Images + 'level/ui/sprStabilityBar.png',
 		Utils.Assets.Images + 'level/characters/sprHammer.png',
 		Utils.Assets.Images + 'level/bgLevel.png',
@@ -27,6 +28,7 @@ Game.Assets = {
 		Utils.Assets.Images + 'level/particles/partRock3.png',
 		Utils.Assets.Images + 'level/particles/partRock4.png',
 		Utils.Assets.Images + 'level/particles/partRock5.png',
+		Utils.Assets.Images + 'level/particles/partFlash.png',
 		Utils.Assets.Images + 'level/particles/partFlash.png',
 	]
 };

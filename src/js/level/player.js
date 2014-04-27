@@ -1,3 +1,25 @@
+var StoneChunk = function(player)
+{
+	if(player.chunkCount < 40)
+	{
+		Game.PIXI.Camera.x = 640 - Math.cos((player.angle + player.chunkCount * 5.25) * Math.PI / 180) * player.collisionPoint + Math.random()*32;
+		Game.PIXI.Camera.y = 360 - Math.sin((player.angle + player.chunkCount * 5.25) * Math.PI / 180) * player.collisionPoint + Math.random()*32;
+		setTimeout(function()
+		{
+			var chunk = new StoneChunk(player);
+		},20)
+	}
+	else
+	{
+		player.cameraUnlocked = false;
+		player.chunkCount = 0;
+		player._180 = false;
+	}
+	player.chunkCount++;
+}
+
+
+
 var Player = function(angle, world)
 {
 	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprCharacterWalk.png']);
@@ -19,6 +41,7 @@ var Player = function(angle, world)
 	this.followPoint = {x: 0, y: 0};
 	this.puffs = [];
 	this.__z = 6;
+	this.chunkCount = 0;
 
 	this.anchor.x = 0.5;
 	this.anchor.y = 0.5;
@@ -32,6 +55,7 @@ var Player = function(angle, world)
 	this.jumpHeight = -10;
 	this.slamming = false;
 	this.smashing = false;
+	this._180 = false;
 
 	var frames = [];
 
@@ -77,9 +101,47 @@ var Player = function(angle, world)
         loop: true,
         reversed: false,
         cb: function(){ 
+        	StateManager.getState().player.cameraUnlocked = true;
+			CameraController.shake(20, 0.025, 5, function () {
+				StateManager.getState().player.cameraUnlocked = false;
+			});
         	StateManager.getState().player.slamming = false; 
         	StateManager.getState().player.animations.play("walk"); 
         	StateManager.getState().world.createImpact(StateManager.getState().player.angle,112,80);
+        }
+	});
+
+	this.setTexture(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprCharacter180.png']);
+
+	var frames = [];
+
+	for(var i = 0; i < 19; i++)
+	{
+		frames.push({
+			x: i*378,
+            y: 0,
+            width: 378,
+            height: 672
+		});
+	}
+	
+	this.animations.mainSprite = this;
+	this.animations.add("180",{
+        frameRate: 0.2,
+        frames: frames,
+        loop: false,
+        reversed: false,
+        cb: function(){ 
+        	StateManager.getState().player.animations.play("walk"); 
+        	StateManager.getState().player.radius = StateManager.getState().player.collisionPoint;
+        	if(StateManager.getState().stability - 80 < 0)
+        	{
+        		StateManager.getState().stability = 0;
+        	}
+        	else
+        	{
+        		StateManager.getState().stability -= 80;
+        	}
         }
 	});
 
@@ -336,6 +398,11 @@ var Player = function(angle, world)
 
 	this.cameraUnlocked = false;
 
+	this.startChain = function()
+	{
+		var chunk = new StoneChunk(this);
+	}
+
 	this.update = function(data)
 	{
 		this.animations.update(data);
@@ -394,11 +461,12 @@ var Player = function(angle, world)
 
 		if (Input.isDown("q"))
 		{
-			if (!this.slamming && !this.smashing)
+			if (!this.slamming && !this.smashing && !this._180)
 			{
 				this.slamming = true;
 				this.animations.setAnimation("slam");
 				this.speed = 0;
+
 				if(StateManager.getState().stability - 5 <= 0)
 				{
 					StateManager.getState().stability = 0;
@@ -412,7 +480,7 @@ var Player = function(angle, world)
 
 		if (Input.isDown("w"))
 		{
-			if (!this.smashing && !this.slamming)
+			if (!this.smashing && !this.slamming && !this._180)
 			{
 				Game.sort();
 
@@ -448,6 +516,43 @@ var Player = function(angle, world)
 			}
 		}
 
+		if (Input.isDown("e"))
+		{
+			if (!this.slamming && !this.smashing && !this._180)
+			{
+				this._180 = true;
+				this.animations.setAnimation("180");
+				this.speed = 0;
+				this.anchor.y = 0.9;
+				this.pivot.y = 0.9;
+				this.cameraUnlocked = true;
+				var player = this;
+				TweenLite.to(
+					Game.PIXI.Camera.position,
+					0.5,
+					{
+						x: 640 - Math.cos(player.angle * Math.PI / 180) * (player.radius + 10),
+						y: 360 - Math.sin(player.angle * Math.PI / 180) * (player.radius + 10),
+						ease: Linear.easeIn
+					}
+				);
+
+				setTimeout(function(){
+					StateManager.getState().player.startChain();
+
+					TweenLite.to(
+					Game.PIXI.Camera.scale,
+					2,
+					{
+						x: 0.95,
+						y: 0.95,
+						ease: Linear.easeIn
+					});
+
+				},500);
+			}
+		}
+
 		if ( StateManager.getState().stability < StateManager.getState().maxStability && !this.smashing && !this.slamming)
 		{
 			if (StateManager.getState().stability + 0.5 > StateManager.getState().maxStability)
@@ -460,7 +565,7 @@ var Player = function(angle, world)
 			}				
 		}
 
-		if(!this.slamming && !this.smashing)
+		if(!this.slamming && !this.smashing && !this._180)
 		{
 
 			if(Input.isDown("left"))
