@@ -5,10 +5,12 @@ var StabilityBar = function(val)
 
 	this.position.x = 0;
 	this.position.y = 0;
+	this.__z = 1000;
 
 	sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/ui/sprStabilityBar.png']);
 	sprite.position.x = 30;
 	sprite.position.y = 13;
+	sprite.__z = 1001;
 	this.addChild(sprite);
 
 	Game.PIXI.Camera.addChild(this);

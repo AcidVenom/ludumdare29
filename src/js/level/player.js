@@ -276,6 +276,7 @@ var Player = function(angle, world)
 			puff.pivot.y = 0.5;
 			puff.alpha = Math.abs(this.speed)*0.05;
 			puff.rotation = Math.random()*360*Math.PI/180;
+			puff.__z = 1000;
 			Game.PIXI.Camera.addChild(puff);
 		}
 

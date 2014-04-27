@@ -96,10 +96,11 @@ var World = function()
     this.impactAreas = [];
 
     this.background.__z = 0;
-    this.mountains.__z = 1
+    this.mountains.__z = 1;
     this.treeLine2.__z = 2;
     this.ground.__z = 3;
     this.treeLine1.__z = 4;
+    this.clouds.__z = 999;
 
     this.__z = 5;
 
@@ -109,6 +110,6 @@ var World = function()
     Game.PIXI.Camera.addChild(this.treeLine2);
     Game.PIXI.Camera.addChild(this.ground);
     Game.PIXI.Camera.addChild(this.treeLine1);
+    Game.PIXI.Camera.addChild(this.clouds);
     Game.PIXI.Camera.addChild(this);
-    
 }

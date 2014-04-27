@@ -41,8 +41,6 @@ function main()
 			for (var i = 0; i < 20; ++i) {
 				this.enemies.push(new Enemy(Math.random() * 360, this.world, this.hotspotEnemies));
 			}
-
-			Game.PIXI.Camera.addChild(this.world.clouds);
 		},
 		update: function(data) {
 			this.player.update(data);
