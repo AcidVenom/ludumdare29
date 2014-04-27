@@ -22,8 +22,8 @@ var World = function()
     this.background.pivot.x = 0.5;
     this.background.pivot.y = 0.5;
 
-    this.background.scale.x = 1.2;
-    this.background.scale.y = 1.2;
+    this.background.scale.x = 1.4;
+    this.background.scale.y = 1.4;
 
     this.ground = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprGround.png']);
     this.ground.anchor.x = 0.5;

@@ -98,31 +98,50 @@ var Player = function(angle, world)
         reversed: false,
         cb: function () { 
         	if (!calledBack) {
+        		var player = StateManager.getState().player;
         		StateManager.getState().player.animations.stop("smash");
-	        	animateHammer(hammer1);
-	        	animateHammer(hammer2);
-	        	animateHammer(hammer3, function () {
-	        		CameraController.shake(35, 0.02, 10, function () {
-	        			StateManager.getState().player.scale = {
-		        			x: 0.35,
-		        			y: 0.35
-		        		}; 
-		        		StateManager.getState().player.smashing = false; 
-		        		StateManager.getState().player.animations.play("walk");
+	        	animateHammer(hammer1, -20);
+	        	animateHammer(hammer2, 0);
+	        	animateHammer(hammer3, 20, function () {
+					if(StateManager.getState().stability - 60 <= 0)
+					{
+						StateManager.getState().stability = 0;
+					}
+					else
+					{
+						StateManager.getState().stability -= 60;
+					}
 
-						hammer1.position.x = 320;
-						hammer1.position.y = 0;
-						hammer2.position.x = 640;
-						hammer2.position.y = 0;
-						hammer3.position.x = 960;
-						hammer3.position.y = 0;
-						calledBack = false;
+	        		CameraController.shake(45, 0.03, 12, function () {
+			        	TweenLite.to(
+			        		player.position,
+			        		0.3,
+			        		{
+			        			x: Math.cos(player.angle * Math.PI / 180) * player.radius,
+			        			y: Math.sin(player.angle * Math.PI / 180) * player.radius,
+			        			ease: Quad.easeIn,
+			        			onComplete: function () {
+			        				StateManager.getState().player.scale = {
+					        			x: 0.35,
+					        			y: 0.35
+					        		}; 
+					        		StateManager.getState().player.smashing = false; 
+					        		StateManager.getState().player.animations.play("walk");
+
+									calledBack = false;
+
+									StateManager.getState().player.cameraUnlocked = false;
+			        			}
+			        		}
+			        	);
+	        			
 	        		});
 	        	});
 	        	calledBack = true;
 	        }
         }
 	});
+
 	this.animations.add("smash1", {
         frameRate: 0.6,
         frames: [{
@@ -144,35 +163,52 @@ var Player = function(angle, world)
 		hammer1 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprHammer.png']),
 		hammer2 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprHammer.png']),
 		hammer3 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprHammer.png']),
-		animateHammer = function (hammer, cb) {
+		animateHammer = function (hammer, start, cb) {
+			var player = StateManager.getState().player;
+			hammer.position.x = Math.cos((player.angle + start) * Math.PI / 180) * (player.radius + 350);
+			hammer.position.y = Math.sin((player.angle + start) * Math.PI / 180) * (player.radius + 350);
 			hammer.pivot.x = 0.5;
 			hammer.pivot.y = 0.5;
 			hammer.anchor.x = 0.5;
 			hammer.anchor.y = 0.5;
 			hammer.scale.x = 0.5;
 			hammer.scale.y = 0.5;
+			hammer.alpha = 1;
 			var tweenVars = {
-				r: Math.random() * 5
+				r: Math.random() * 5,
+				a: 1
 			};
 			TweenLite.to(
 				hammer.position,
-				1,
+				0.4,
 				{
-					x: 600,
-					y: 500,
+					x: Math.cos(player.angle * Math.PI / 180) * (player.radius),
+					y: Math.sin(player.angle * Math.PI / 180) * (player.radius),
 					ease: Quad.easeIn,
 					onComplete: function () {
 						if (cb) {
 							cb();
 						}
+
+						TweenLite.to(
+							tweenVars,
+							0.4,
+							{
+								a: 0,
+								ease: Quad.easeIn,
+								onUpdate: function () {
+									hammer.alpha = tweenVars.a;
+								}
+							}
+						);
 					}
 				}
 			);
 			TweenLite.to(
 				tweenVars,
-				1,
+				0.4,
 				{
-					r: tweenVars.r + 15,
+					r: tweenVars.r + 10,
 					ease: Quad.easeIn,
 					onUpdate: function () {
 						hammer.rotation = tweenVars.r;
@@ -181,7 +217,7 @@ var Player = function(angle, world)
 			);
 			TweenLite.to(
 				hammer.scale,
-				1,
+				0.4,
 				{
 					x: 0.3,
 					y: 0.3,
@@ -195,18 +231,19 @@ var Player = function(angle, world)
 	hammer1.setZ(500);
 	hammer2.setZ(501);
 	hammer3.setZ(500);
+
+	hammer1.alpha = 0;
+	hammer2.alpha = 0;
+	hammer3.alpha = 0;
+
 	Game.sort();
-	hammer1.position.x = 320;
-	hammer1.position.y = 0;
-	hammer2.position.x = 640;
-	hammer2.position.y = 0;
-	hammer3.position.x = 960;
-	hammer3.position.y = 0;
-	Game.PIXI.Stage.addChild(hammer1);
-	Game.PIXI.Stage.addChild(hammer2);
-	Game.PIXI.Stage.addChild(hammer3);
+	Game.PIXI.Camera.addChild(hammer1);
+	Game.PIXI.Camera.addChild(hammer2);
+	Game.PIXI.Camera.addChild(hammer3);
 
 	this.animations.play("walk");
+
+	this.cameraUnlocked = false;
 
 	this.update = function(data)
 	{
@@ -249,7 +286,7 @@ var Player = function(angle, world)
 
 		if (Input.isDown("q"))
 		{
-			if (!this.slamming)
+			if (!this.slamming && !this.smashing)
 			{
 				this.slamming = true;
 				this.animations.setAnimation("slam");
@@ -267,34 +304,43 @@ var Player = function(angle, world)
 
 		if (Input.isDown("w"))
 		{
-			if (!this.smashing)
+			if (!this.smashing && !this.slamming)
 			{
 				Game.sort();
-				this.animations.play('smash1');
+
+				var player = this;
 				this.smashing = true;
+				this.cameraUnlocked = true;
 				setTimeout(function () {
 					StateManager.getState().player.animations.play('smash');
-				}, 1500);
+				}, 750);
 				StateManager.getState().player.scale.x = 1;
 				StateManager.getState().player.scale.y = 1;
 				this.speed = 0;
-				this.position.x = 0;
-				this.position.y = -500;
-				Game.PIXI.Camera.position.y = 900;
-				Game.PIXI.Camera.position.x = 600;
-				this.rotation = 0;
-				if(StateManager.getState().stability - 20 <= 0)
-				{
-					StateManager.getState().stability = 0;
-				}
-				else
-				{
-					StateManager.getState().stability -= 20;
-				}
+				TweenLite.to(
+					player.position,
+					3,
+					{
+						x: Math.cos(player.angle * Math.PI / 180) * (player.radius + 150),
+						y: Math.sin(player.angle * Math.PI / 180) * (player.radius + 150),
+						ease: Quad.easeOut
+					}
+				);
+				TweenLite.to(
+					Game.PIXI.Camera.scale,
+					3,
+					{
+						x: 0.85,
+						y: 0.85,
+						ease: Quad.easeInOut
+					}
+				);
+
+				this.animations.play('smash1');
 			}
 		}
 
-		if ( StateManager.getState().stability < StateManager.getState().maxStability)
+		if ( StateManager.getState().stability < StateManager.getState().maxStability && !this.smashing && !this.slamming)
 		{
 			if (StateManager.getState().stability + 0.5 > StateManager.getState().maxStability)
 			{
@@ -411,7 +457,7 @@ var Player = function(angle, world)
 			)
 
 		}
-		else
+		else if (!this.cameraUnlocked)
 		{
 			TweenLite.to(
 				Game.PIXI.Camera.scale,
@@ -425,9 +471,9 @@ var Player = function(angle, world)
 		}
 
 
-		if (!this.smashing) {
-			var wobble = Math.sin(this.angle*Math.PI/180*20);
 
+		if (!this.cameraUnlocked) {
+			var wobble = Math.sin(this.angle*Math.PI/180*20);
 			this.position.x = Math.cos(this.angle * Math.PI / 180) * this.radius;
 			this.position.y = Math.sin(this.angle * Math.PI / 180) * (this.radius + wobble*4);
 
@@ -435,12 +481,12 @@ var Player = function(angle, world)
 
 			this.angle+=this.speed*data.dt;
 
-			var dx = 590-this.position.x/4 - Game.PIXI.Camera.position.x;
+			var dx = 640-this.position.x/4 - Game.PIXI.Camera.position.x;
 			var dy = 360-this.position.y/4 - Game.PIXI.Camera.position.y;
 
 			var distance = Math.sqrt(dx*dx + dy*dy);
 
-			var movement = Math.Slerp(Game.PIXI.Camera.position.x, Game.PIXI.Camera.position.y, 590-this.position.x / 4, 360 - this.position.y / 4, distance / 2 * data.dt);
+			var movement = Math.Slerp(Game.PIXI.Camera.position.x, Game.PIXI.Camera.position.y, 640-this.position.x / 4, 360 - this.position.y / 4, distance / 2 * data.dt);
 
 			if (movement !== null)
 			{
