@@ -720,7 +720,7 @@ var Player = function(angle, world)
 
 			if(StateManager.getState().miners.length < 1)
 			{
-				StateManager.getState().ui.deathReason.setText("All your dwarfs have died!\nKill goblins to protect them!\n\n\n\n\n\nPress ENTER to continue");
+				StateManager.getState().ui.deathReason.setText("All your dwarves have died!\nKill goblins to protect them!\n\n\n\n\n\nPress ENTER to continue");
 			}
 			StateManager.getState().gameOver = true;
 			this.cameraUnlocked = true;

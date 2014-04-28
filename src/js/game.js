@@ -26,6 +26,15 @@ var Game = {
             Loader: new PIXI.AssetLoader(Game.Assets.AssetList)
         };
 
+        var progressBar = document.getElementById("progressBar");
+        var loaded = 0;
+
+        Game.PIXI.Loader.addEventListener('onProgress', function () {
+            loaded++;
+            progressBar.value = String(loaded);
+            progressBar.max = String(Utils.Assets.Images.length);
+        });
+
         Game.PIXI.Loader.addEventListener('onComplete', function () {
             Game._initialized = true;
 
@@ -42,6 +51,8 @@ var Game = {
             extend(Game.PIXI.Camera, GameObject());
             Game.PIXI.Camera.setZ(450);
             Game.PIXI.Stage.addChild(Game.PIXI.Camera);
+            document.getElementById("progressDiv").style.display = "none";
+            document.getElementById("canvas").style.display = "block";
 
             requestAnimationFrame(Game.update);
         });

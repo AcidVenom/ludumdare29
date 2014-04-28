@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Dwarfs & Goblins</title>
+		<title>Dwarves & Goblins</title>
 
 		<meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 
@@ -10,10 +10,74 @@
 		<script src="./src/lib/stats.js"></script>
 		<script src="./src/lib/sugar.js"></script>
 		<script src="./src/js/core.js"></script>
+
+		<style>
+			#progressDiv
+			{
+				width: 512px;
+				height: 256px;
+				background-color: black;
+				margin: auto;
+				padding: auto;
+				margin-top: 10%;
+			}
+
+			#progressBar
+			{
+				display: table;
+				margin: auto;
+				padding: auto;
+				margin-top: 100px;
+				width: 90%;
+				border-radius: 10px;
+
+				width: 400px;
+				height: 14px;
+				display: block;
+				-webkit-appearance: none;
+				border: none;
+			}
+
+			progress::-webkit-progress-bar {
+				background: black;
+				border-radius: 50px;
+				padding: 2px;
+				box-shadow: 0 1px 0px 0 rgba(255, 255, 255, 0.2);
+			}
+
+			progress::-webkit-progress-value {
+				border-radius: 50px;
+				box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.4);
+				background:
+					-webkit-linear-gradient(45deg, transparent, transparent 33%, rgba(0, 0, 0, 0.1) 33%, rgba(0, 0, 0, 0.1) 66%, transparent 66%),
+					-webkit-linear-gradient(top, rgba(255, 255, 255, 0.25), rgba(0, 0, 0, 0.2)),
+					-webkit-linear-gradient(left, red, green);
+				
+				background-size: 25px 14px, 100% 100%, 100% 100%;
+				-webkit-animation: move 5s linear 0 infinite;
+			}
+
+			@-webkit-keyframes move {
+				0% {background-position: 0px 0px, 0 0, 0 0}
+				100% {background-position: -100px 0px, 0 0, 0 0}
+			}
+
+			#progressText
+			{
+				display: table;
+				margin: auto;
+				margin-top: 50px;
+				font: bold 20px Arial;
+			}
+		</style>
 	</head>
 
 	<body style="background: #000000; color: #FFFFFF; margin: 0; padding: 0;">
-		<canvas id="canvas" style="padding: 0; margin: 0 auto; display: block;"></canvas>
+		<canvas id="canvas" style="padding: 0; margin: 0 auto; display: none;"></canvas>
+		<div id="progressDiv">
+			<span id="progressText">Please wait while we're getting things ready!</span>
+			<progress id="progressBar" value="0" max="0"></progress>
+		</div>
 	</body>
 
 </html>
