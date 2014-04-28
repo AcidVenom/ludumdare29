@@ -121,7 +121,7 @@ var World = function()
                 self.wave++;
                 self.spawnEnemies();
 
-                if(self.wave % 5 == 0)
+                if(self.wave % 3 == 0)
                 {
                     self.spawnMiners();
                 }
@@ -129,13 +129,13 @@ var World = function()
                 for (var i = 0; i < StateManager.getState().miners.length; ++i) {
                     var miner = StateManager.getState().miners[i];
 
-                    if(miner.health.__health + 10 > 100)
+                    if(miner.health.__health + 20 > 100)
                     {
                         miner.health.__health = 100;
                     }
                     else
                     {
-                        miner.health.__health+=10;
+                        miner.health.__health += 20;
                     }
                     miner.health.updateHealthbar();
                 }

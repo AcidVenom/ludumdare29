@@ -32,7 +32,6 @@ var StabilityBar = function(val)
 
 	this.textGoblins.position.x -= 30;
 
-
 	this.textMiners = new PIXI.Text("");
 	this.textMiners.setStyle({
 		font: 'bold 14px Arial',
@@ -41,6 +40,16 @@ var StabilityBar = function(val)
 	});
 
 	this.textMiners.position.x += 20;
+	
+	this.textWave = new PIXI.Text("");
+	this.textWave.setStyle({
+		font: 'bold 14px Arial',
+		fill: '#FFFFFF',
+		align: 'center'
+	});
+
+	this.textWave.position.y += 60;
+	this.textWave.position.x -= 5;
 	this.timer = 0;
 
 	this.update = function()
@@ -51,6 +60,7 @@ var StabilityBar = function(val)
 
 		this.textGoblins.setText(StateManager.getState().enemies.length);
 		this.textMiners.setText(StateManager.getState().miners.length);
+		this.textWave.setText(StateManager.getState().world.wave + 1);
 
 		this.rotation = Math.sin(this.timer*0.01)/4;
 		this.scale.x = 1+Math.abs(Math.sin(this.timer*0.01))/16;
@@ -61,6 +71,7 @@ var StabilityBar = function(val)
 	this.textMiners.__z = 2000;
 	this.addChild(this.textGoblins);
 	this.addChild(this.textMiners);
+	this.addChild(this.textWave);
 }
 
 var UI = function(val)

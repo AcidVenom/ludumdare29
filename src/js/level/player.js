@@ -175,10 +175,10 @@ var Player = function(angle, world)
         	StateManager.getState().player.cameraUnlocked = true;
 			CameraController.shake(20, 0.025, 5, function () {
 				StateManager.getState().player.cameraUnlocked = false;
+	        	StateManager.getState().player.slamming = false; 
+	        	StateManager.getState().player.animations.play("walk"); 
+	        	StateManager.getState().world.createImpact(StateManager.getState().player.angle,112,80);
 			});
-        	StateManager.getState().player.slamming = false; 
-        	StateManager.getState().player.animations.play("walk"); 
-        	StateManager.getState().world.createImpact(StateManager.getState().player.angle,112,80);
         }
 	});
 
@@ -259,6 +259,74 @@ var Player = function(angle, world)
 					if (player.particles.smashExplosion) {
 						player.particles.removeEmitter(player.particles.smashExplosion);
 					};
+					player.particles.smokeEffects = player.particles.createEmitter({
+						parent: Game.PIXI.Camera,
+						texture: PIXI.TextureCache[Utils.Assets.Images + 'level/sprPuff.png'],
+						instantEmitSize: 50,
+						lifetime: 50000000,
+						onParticleInitialization: function (particle) {
+							particle.position = {
+								x: Math.cos(player.angle * Math.PI / 180) * (player.radius) ,
+								y: Math.sin(player.angle * Math.PI / 180) * (player.radius)
+							};
+							particle.pivot.x = 0.5;
+							particle.pivot.y = 0.5;
+							particle.anchor.x = 0.5;
+							particle.anchor.y = 0.5;
+							particle.direction = Math.floor(Math.random()*2);
+							particle.active = true;
+							particle.__z = 5000;
+							particle.angle = player.angle - 20 + Math.random()*40;
+							particle.randomRadius = 0;
+							particle.startRadius = player.radius + Math.random() * 20;
+							particle.speed = Math.random();
+							particle.scale.x = 0.4;
+							particle.rotationSpeed = 0.4;
+							particle.fadeSpeed = 0.05;
+							particle.scale.y = 0.4;
+							particle.y = (Math.random() * 50) - 25;
+							particle.velocity = 5+Math.random()*10;
+
+						},
+						onParticleUpdate: function (particle, data) {
+							particle.rotation += particle.rotationSpeed;
+
+							if(particle.alpha > 0)
+							{
+								particle.alpha -= particle.fadeSpeed;
+							}
+
+							if(particle.direction == 0)
+							{
+								particle.angle += particle.speed;
+							}
+							else
+							{
+								particle.angle -= particle.speed;
+							}
+
+							if(particle.velocity > 0.3)
+							{
+								particle.velocity -= 0.3;
+							}
+							
+							particle.y += particle.velocity;
+
+							particle.scale.x += 0.01;
+							particle.scale.y += 0.01;
+
+							if (particle.alpha <= particle.fadeSpeed)
+							{
+								particle.active = false;
+							}
+							
+
+							particle.position = {
+								x: Math.cos(particle.angle * Math.PI / 180) * (particle.startRadius + particle.y + particle.randomRadius),
+								y: Math.sin(particle.angle * Math.PI / 180) * (particle.startRadius + particle.y + particle.randomRadius)
+							};
+						}
+					});
 					player.particles.smashExplosion = player.particles.createEmitter({
 						parent: Game.PIXI.Camera,
 						texture: PIXI.TextureCache[Utils.Assets.Images + 'level/particles/partRock1.png'],
@@ -281,6 +349,7 @@ var Player = function(angle, world)
 							particle.bounce = 5+Math.floor(Math.random()*20);
 							particle.direction = Math.floor(Math.random()*2);
 							particle.active = true;
+							particle.__z = 5001;
 						},
 						onParticleUpdate: function (particle, data) {
 							if(particle.direction == 0)
@@ -338,6 +407,7 @@ var Player = function(angle, world)
 							};
 						}
 					});
+					player.particles.smokeEffects.__z = 10000;
 					player.particles.smashExplosion.__z = 10000;
 
 	        		CameraController.shake(45, 0.03, 12, function () {
