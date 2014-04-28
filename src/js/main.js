@@ -10,7 +10,8 @@ require(
 		"level/cameracontroller.js",
 		"level/ui.js",
 		"level/particlesystem.js",
-		"level/overlay.js"
+		"level/overlay.js",
+		"level/powerup.js"
 	], main);
 
 function main()
@@ -38,6 +39,7 @@ function main()
     		this.player = new Player(Math.random() * 360, this.world);
     		this.ui = new UI(this.stability);
 			this.world = new World();
+			this.powerupBar = new PowerupBar();
 			this.sorted = false;
 
 			var Filter = function()
@@ -88,6 +90,7 @@ function main()
 				Game.sort();
 				this.sorted = true;
 			}
+			PowerupManager.update(data);
 			this.player.update(data);
 			this.timer+=0.01;
 			this.redOverlay.update(data);

@@ -126,7 +126,7 @@ var Player = function(angle, world)
 	this.speed = 0;
 	this.maxSpeed = 12;
 
-	this.jumpHeight = -10;
+	this.jumpHeight = -14;
 	this.slamming = false;
 	this.smashing = false;
 	this._180 = false;
