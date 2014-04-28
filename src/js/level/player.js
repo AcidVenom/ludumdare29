@@ -47,6 +47,8 @@ var StoneChunk = function(player,prevChunk,dir,chunkCount)
 	sprite.scale.x = 0.8+Math.random()*0.3;
 	sprite.rotation = Math.random()*Math.PI;
 
+	this.__z = 600;
+
 	Game.PIXI.Camera.addChild(this);
 
 	if(chunkcount < 60)
@@ -106,6 +108,7 @@ var Player = function(angle, world)
 	extend(this.particles, ParticleSystem());
 
 	this.collisionPoint = 330;
+	this._360Casted = false;
 	this.world = world;
 	this.angle = angle;
 	this.radius = this.collisionPoint;
@@ -707,6 +710,21 @@ var Player = function(angle, world)
 
 	this.update = function(data)
 	{
+		if(StateManager.getState().stability <= 0 || StateManager.getState().miners.length < 1)
+		{
+			StateManager.getState().gameOver = true;
+			this.cameraUnlocked = true;
+
+			TweenLite.to(
+				Game.PIXI.Camera.position,
+				0.5,
+				{
+					x: 640,
+					y: 360,
+					ease: Linear.easeIn
+				}
+			)
+		}
 		for (var i = 0; i < this.attackSprites.length; i++) {
 			this.attackSprites[i].animations.update(data);
 			this.attackSprites[i].particles.update(data);
@@ -724,131 +742,172 @@ var Player = function(angle, world)
 			this.angle = 359;
 		}
 
-		StateManager.getState().world.mountains.rotation+=0.008*data.dt*StateManager.getState().world.timeScale;
-		StateManager.getState().world.treeLine2.rotation-=0.004*data.dt*StateManager.getState().world.timeScale;
-		StateManager.getState().world.treeLine2.rotation-=0.02*data.dt*StateManager.getState().world.timeScale;
-		StateManager.getState().world.clouds.rotation+=0.01*data.dt*StateManager.getState().world.timeScale;
-
-		Game.PIXI.Camera.filters[0].uniforms.exposure.value = -Math.abs(Math.sin(StateManager.getState().world.clouds.rotation))/2;
-		Game.PIXI.Camera.filters[0].uniforms.saturation.value = -Math.abs(Math.sin(StateManager.getState().world.clouds.rotation))/2;
-		StateManager.getState().world.setFlareAlpha(Math.abs(Math.sin(StateManager.getState().world.clouds.rotation)));
-
-		if(this.radius == this.collisionPoint && (this.speed > 0 || this.speed < 0))
+		if(StateManager.getState().gameOver == false)
 		{
-			this.puffs.push(new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprPuff.png']));
-			var puff = this.puffs[this.puffs.length-1];
-			puff.position.x = this.position.x-Math.cos(this.angle*Math.PI/180)*20-Math.random()*10 + Math.random()*20;
-			puff.position.y = this.position.y-Math.sin(this.angle*Math.PI/180)*20-Math.random()*10 + Math.random()*20;
-			puff.scale.x = 0.1;
-			puff.scale.y = puff.scale.x;
-			puff.lifeTime = 0;
-			puff.anchor.x = 0.5;
-			puff.anchor.y = 0.5;
-			puff.pivot.x = 0.5;
-			puff.pivot.y = 0.5;
-			puff.alpha = Math.abs(this.speed)*0.05;
-			puff.rotation = Math.random()*360*Math.PI/180;
-			puff.__z = 1000;
-			Game.PIXI.Camera.addChild(puff);
-		}
+			StateManager.getState().world.mountains.rotation+=0.008*data.dt*StateManager.getState().world.timeScale;
+			StateManager.getState().world.treeLine2.rotation-=0.004*data.dt*StateManager.getState().world.timeScale;
+			StateManager.getState().world.treeLine2.rotation-=0.02*data.dt*StateManager.getState().world.timeScale;
+			StateManager.getState().world.clouds.rotation+=0.01*data.dt*StateManager.getState().world.timeScale;
 
-		for(var i = 0; i < this.puffs.length-1; ++i)
-		{
-			this.puffs[i].rotation += 0.1*data.dt*StateManager.getState().world.timeScale;
-			this.puffs[i].position.x -= Math.cos(this.angle*Math.PI/180-Math.PI*this.speed/this.maxSpeed)*10*data.dt*StateManager.getState().world.timeScale;
-			this.puffs[i].position.y -= Math.sin(this.angle*Math.PI/180-Math.PI*this.speed/this.maxSpeed)*10*data.dt*StateManager.getState().world.timeScale;
-			this.puffs[i].scale.x += Math.abs(this.speed)*0.02*data.dt*StateManager.getState().world.timeScale;
-			this.puffs[i].scale.y = this.puffs[i].scale.x;
-			this.puffs[i].alpha -= 0.15*data.dt*StateManager.getState().world.timeScale;
+			Game.PIXI.Camera.filters[0].uniforms.exposure.value = -Math.abs(Math.sin(StateManager.getState().world.clouds.rotation))/2;
+			Game.PIXI.Camera.filters[0].uniforms.saturation.value = -Math.abs(Math.sin(StateManager.getState().world.clouds.rotation))/2;
+			StateManager.getState().world.setFlareAlpha(Math.abs(Math.sin(StateManager.getState().world.clouds.rotation)));
 
-			if (this.puffs[i].alpha < 0)
+			if(this.radius == this.collisionPoint && (this.speed > 0 || this.speed < 0))
 			{
-				Game.PIXI.Camera.removeChild(this.puffs[i]);
-				this.puffs.splice(i,1);
+				this.puffs.push(new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprPuff.png']));
+				var puff = this.puffs[this.puffs.length-1];
+				puff.position.x = this.position.x-Math.cos(this.angle*Math.PI/180)*20-Math.random()*10 + Math.random()*20;
+				puff.position.y = this.position.y-Math.sin(this.angle*Math.PI/180)*20-Math.random()*10 + Math.random()*20;
+				puff.scale.x = 0.1;
+				puff.scale.y = puff.scale.x;
+				puff.lifeTime = 0;
+				puff.anchor.x = 0.5;
+				puff.anchor.y = 0.5;
+				puff.pivot.x = 0.5;
+				puff.pivot.y = 0.5;
+				puff.alpha = Math.abs(this.speed)*0.05;
+				puff.rotation = Math.random()*360*Math.PI/180;
+				puff.__z = 1000;
+				Game.PIXI.Camera.addChild(puff);
 			}
-		}
 
-		if (Input.isDown("q"))
-		{
-			if (!this.slamming && !this.smashing && !this._180 && !this._360)
+			for(var i = 0; i < this.puffs.length-1; ++i)
 			{
-				this.slamming = true;
-				this.animations.setAnimation("slam");
-				this.speed = 0;
+				this.puffs[i].rotation += 0.1*data.dt*StateManager.getState().world.timeScale;
+				this.puffs[i].position.x -= Math.cos(this.angle*Math.PI/180-Math.PI*this.speed/this.maxSpeed)*10*data.dt*StateManager.getState().world.timeScale;
+				this.puffs[i].position.y -= Math.sin(this.angle*Math.PI/180-Math.PI*this.speed/this.maxSpeed)*10*data.dt*StateManager.getState().world.timeScale;
+				this.puffs[i].scale.x += Math.abs(this.speed)*0.02*data.dt*StateManager.getState().world.timeScale;
+				this.puffs[i].scale.y = this.puffs[i].scale.x;
+				this.puffs[i].alpha -= 0.15*data.dt*StateManager.getState().world.timeScale;
 
-				if(StateManager.getState().stability - 5 <= 0)
+				if (this.puffs[i].alpha < 0)
 				{
-					StateManager.getState().stability = 0;
-				}
-				else
-				{
-					StateManager.getState().stability -= 5;
+					Game.PIXI.Camera.removeChild(this.puffs[i]);
+					this.puffs.splice(i,1);
 				}
 			}
-		}
 
-		if (Input.isDown("w"))
-		{
-			if (!this.smashing && !this.slamming && !this._180 && !this._360)
+			if (Input.isDown("q"))
 			{
-				Game.sort();
+				if (!this.slamming && !this.smashing && !this._180 && !this._360)
+				{
+					this.slamming = true;
+					this.animations.setAnimation("slam");
+					this.speed = 0;
 
-				var player = this;
-				this.smashing = true;
-				this.cameraUnlocked = true;
-				setTimeout(function () {
-					StateManager.getState().player.animations.play('smash');
-				}, 0);
-				StateManager.getState().player.scale.x = 1;
-				StateManager.getState().player.scale.y = 1;
-				this.speed = 0;
-				TweenLite.to(
-					player.position,
-					2.5,
+					if(StateManager.getState().stability - 5 <= 0)
 					{
-						x: Math.cos(player.angle * Math.PI / 180) * (player.radius + 150),
-						y: Math.sin(player.angle * Math.PI / 180) * (player.radius + 150),
-						ease: Quad.easeOut
+						StateManager.getState().stability = 0;
 					}
-				);
-				TweenLite.to(
-					Game.PIXI.Camera.scale,
-					1,
+					else
 					{
-						x: 0.85,
-						y: 0.85,
-						ease: Quad.easeInOut
+						StateManager.getState().stability -= 5;
 					}
-				);
-
-				this.animations.play('smash1');
+				}
 			}
-		}
 
-		if (Input.isDown("e"))
-		{
-			if (!this.slamming && !this.smashing && !this._180 && !this._360)
+			if (Input.isDown("w"))
 			{
-				this._180 = true;
-				this.animations.setAnimation("180");
-				this.speed = 0;
-				this.anchor.y = 0.9;
-				this.pivot.y = 0.9;
-				this.cameraUnlocked = true;
-				var player = this;
-				TweenLite.to(
-					Game.PIXI.Camera.position,
-					0.5,
-					{
-						x: 640 - Math.cos(player.angle * Math.PI / 180) * (player.radius + 10),
-						y: 360 - Math.sin(player.angle * Math.PI / 180) * (player.radius + 10),
-						ease: Linear.easeIn
-					}
-				);
+				if (!this.smashing && !this.slamming && !this._180 && !this._360)
+				{
+					Game.sort();
 
-				setTimeout(function(){
-					StateManager.getState().player.startChain();
+					var player = this;
+					this.smashing = true;
+					this.cameraUnlocked = true;
+					setTimeout(function () {
+						StateManager.getState().player.animations.play('smash');
+					}, 0);
+					StateManager.getState().player.scale.x = 1;
+					StateManager.getState().player.scale.y = 1;
+					this.speed = 0;
+					TweenLite.to(
+						player.position,
+						2.5,
+						{
+							x: Math.cos(player.angle * Math.PI / 180) * (player.radius + 150),
+							y: Math.sin(player.angle * Math.PI / 180) * (player.radius + 150),
+							ease: Quad.easeOut
+						}
+					);
+					TweenLite.to(
+						Game.PIXI.Camera.scale,
+						1,
+						{
+							x: 0.85,
+							y: 0.85,
+							ease: Quad.easeInOut
+						}
+					);
 
+					this.animations.play('smash1');
+				}
+			}
+
+			if (Input.isDown("e"))
+			{
+				if (!this.slamming && !this.smashing && !this._180 && !this._360)
+				{
+					this._180 = true;
+					this.animations.setAnimation("180");
+					this.speed = 0;
+					this.anchor.y = 0.9;
+					this.pivot.y = 0.9;
+					this.cameraUnlocked = true;
+					var player = this;
+					TweenLite.to(
+						Game.PIXI.Camera.position,
+						0.5,
+						{
+							x: 640 - Math.cos(player.angle * Math.PI / 180) * (player.radius + 10),
+							y: 360 - Math.sin(player.angle * Math.PI / 180) * (player.radius + 10),
+							ease: Linear.easeIn
+						}
+					);
+
+					setTimeout(function(){
+						StateManager.getState().player.startChain();
+
+						TweenLite.to(
+						Game.PIXI.Camera.scale,
+						2,
+						{
+							x: 0.95,
+							y: 0.95,
+							ease: Linear.easeIn
+						});
+
+					},500);
+				}
+			}
+			if (Input.isDown("r"))
+			{
+				if (!this.slamming && !this.smashing && !this._180 && !this._360 && !this._360Casted)
+				{
+					this._360Casted = true;
+					this._360 = true;
+					this.animations.play("teleport");
+					this.speed = 0;
+					this.cameraUnlocked = true;
+					TweenLite.to(
+						Game.PIXI.Camera.position,
+						0.5,
+						{
+							x: 640,
+							y: 360,
+							ease: Linear.easeInOut
+						}
+					);
+					TweenLite.to(
+						Game.PIXI.Camera.scale,
+						0.5,
+						{
+							x: 0.62,
+							y: 0.62,
+							ease: Linear.easeInOut
+						}
+					);/*
 					TweenLite.to(
 					Game.PIXI.Camera.scale,
 					2,
@@ -856,201 +915,170 @@ var Player = function(angle, world)
 						x: 0.95,
 						y: 0.95,
 						ease: Linear.easeIn
-					});
-
-				},500);
+					});*/
+				}
 			}
-		}
-		if (Input.isDown("r"))
-		{
-			if (!this.slamming && !this.smashing && !this._180 && !this._360)
+
+			if ( StateManager.getState().stability < StateManager.getState().maxStability && !this.smashing && !this.slamming && !this._180)
 			{
-				this._360 = true;
-				this.animations.play("teleport");
-				this.speed = 0;
-				this.cameraUnlocked = true;
-				TweenLite.to(
-					Game.PIXI.Camera.position,
-					0.5,
+				if (StateManager.getState().stability + 2* data.dt*StateManager.getState().world.timeScale > StateManager.getState().maxStability)
+				{
+					StateManager.getState().stability = StateManager.getState().maxStability
+				}
+				else
+				{
+					StateManager.getState().stability += 2* data.dt*StateManager.getState().world.timeScale;
+				}				
+			}
+
+			if(!this.slamming && !this.smashing && !this._180 && !this._360)
+			{
+				if(Input.isDown("left"))
+				{
+					
+					if(this.speed > 0)
 					{
-						x: 640,
-						y: 360,
-						ease: Linear.easeInOut
+						this.speed = 0;
 					}
-				);
+					if (this.speed > -this.maxSpeed)
+					{
+						this.speed-=3*data.dt*StateManager.getState().world.timeScale;
+					}
+					this.animations.setAnimation("walk");
+				}
+				else if(Input.isDown("right"))
+				{
+					
+					if(this.speed < 0)
+					{
+						this.speed = 0;
+					}
+					if (this.speed < this.maxSpeed)
+					{
+						this.speed+=3*data.dt*StateManager.getState().world.timeScale;
+					}
+					this.animations.setAnimation("walk");
+				}
+				else
+				{
+					if(this.speed > 0)
+					{
+						this.speed-=3*data.dt*StateManager.getState().world.timeScale;
+					}
+					else if(this.speed < 0)
+					{
+						this.speed+=3*data.dt*StateManager.getState().world.timeScale;
+					}
+				}
+
+				if(this.speed > -3*data.dt*StateManager.getState().world.timeScale && this.speed < 3*data.dt*StateManager.getState().world.timeScale)
+				{
+					this.speed = 0;
+				}
+
+				this.animations.setFramerate("walk",this.maxSpeed/20-Math.abs(this.speed)/20);
+
+				if(this.speed == 0)
+				{
+					this.animations.pause("walk");
+				}
+				else
+				{
+					this.animations.resume("walk");
+				}
+			}
+
+			if(this.radius > this.collisionPoint)
+			{
+				this.velocity += 5*data.dt*StateManager.getState().world.timeScale;
+				this.radius-=5*this.velocity*data.dt*StateManager.getState().world.timeScale;
+			}
+
+			if(this.radius < this.collisionPoint)
+			{
+				this.radius = this.collisionPoint;
+				this.velocity = 0;
+			}
+
+			if (this.radius == this.collisionPoint && Input.isDown("space"))
+			{
+				this.velocity = this.jumpHeight;
+				this.radius++;
+			}
+			if(this.speed > 0)
+			{
+				this.scale.x = -0.35;
+
 				TweenLite.to(
 					Game.PIXI.Camera.scale,
-					0.5,
+					3,
 					{
-						x: 0.62,
-						y: 0.62,
-						ease: Linear.easeInOut
-					}
-				);/*
+						x: 1,
+						y: 1
+					},
+					Linear.easeIn
+				)
+				
+
+			}
+			else if(this.speed < 0)
+			{
+				this.scale.x = 0.35;
+
 				TweenLite.to(
-				Game.PIXI.Camera.scale,
-				2,
+					Game.PIXI.Camera.scale,
+					3,
+					{
+						x: 1,
+						y: 1
+					},
+					Linear.easeIn
+				)
+
+			}
+			else if (!this.cameraUnlocked)
+			{
+				TweenLite.to(
+					Game.PIXI.Camera.scale,
+					2,
+					{
+						x: 1.3,
+						y: 1.3
+					},
+					Bounce.easeOut
+				)
+			}
+
+
+
+			if (!this.cameraUnlocked) {
+				var wobble = Math.sin(this.angle*Math.PI/180*20);
+				this.position.x = Math.cos(this.angle * Math.PI / 180) * this.radius;
+				this.position.y = Math.sin(this.angle * Math.PI / 180) * (this.radius + wobble*4);
+
+				this.rotation = this.angle*Math.PI/180+Math.PI/2;
+
+				this.angle+=this.speed*data.dt*StateManager.getState().world.timeScale;
+
+				var dx = 640-this.position.x/4 - Game.PIXI.Camera.position.x;
+				var dy = 360-this.position.y/4 - Game.PIXI.Camera.position.y;
+
+				var distance = Math.sqrt(dx*dx + dy*dy);
+
+				var movement = Math.Slerp(Game.PIXI.Camera.position.x, Game.PIXI.Camera.position.y, 640-this.position.x / 4, 360 - this.position.y / 4, distance / 2 * data.dt*StateManager.getState().world.timeScale);
+
+				if (movement !== null)
 				{
-					x: 0.95,
-					y: 0.95,
-					ease: Linear.easeIn
-				});*/
+					Game.PIXI.Camera.position.x += movement.x;
+					Game.PIXI.Camera.position.y += movement.y;
+				}
 			}
 		}
-
-		if ( StateManager.getState().stability < StateManager.getState().maxStability && !this.smashing && !this.slamming && !this._180)
-		{
-			if (StateManager.getState().stability + 2* data.dt*StateManager.getState().world.timeScale > StateManager.getState().maxStability)
-			{
-				StateManager.getState().stability = StateManager.getState().maxStability
-			}
-			else
-			{
-				StateManager.getState().stability += 2* data.dt*StateManager.getState().world.timeScale;
-			}				
-		}
-
-		if(!this.slamming && !this.smashing && !this._180 && !this._360)
-		{
-			if(Input.isDown("left"))
-			{
-				
-				if(this.speed > 0)
-				{
-					this.speed = 0;
-				}
-				if (this.speed > -this.maxSpeed)
-				{
-					this.speed-=3*data.dt*StateManager.getState().world.timeScale;
-				}
-				this.animations.setAnimation("walk");
-			}
-			else if(Input.isDown("right"))
-			{
-				
-				if(this.speed < 0)
-				{
-					this.speed = 0;
-				}
-				if (this.speed < this.maxSpeed)
-				{
-					this.speed+=3*data.dt*StateManager.getState().world.timeScale;
-				}
-				this.animations.setAnimation("walk");
-			}
-			else
-			{
-				if(this.speed > 0)
-				{
-					this.speed-=3*data.dt*StateManager.getState().world.timeScale;
-				}
-				else if(this.speed < 0)
-				{
-					this.speed+=3*data.dt*StateManager.getState().world.timeScale;
-				}
-			}
-
-			if(this.speed > -3*data.dt*StateManager.getState().world.timeScale && this.speed < 3*data.dt*StateManager.getState().world.timeScale)
-			{
-				this.speed = 0;
-			}
-
-			this.animations.setFramerate("walk",this.maxSpeed/20-Math.abs(this.speed)/20);
-
-			if(this.speed == 0)
-			{
-				this.animations.pause("walk");
-			}
-			else
-			{
-				this.animations.resume("walk");
-			}
-		}
-
-		if(this.radius > this.collisionPoint)
-		{
-			this.velocity += 5*data.dt*StateManager.getState().world.timeScale;
-			this.radius-=5*this.velocity*data.dt*StateManager.getState().world.timeScale;
-		}
-
-		if(this.radius < this.collisionPoint)
+		else
 		{
 			this.radius = this.collisionPoint;
-			this.velocity = 0;
-		}
-
-		if (this.radius == this.collisionPoint && Input.isDown("space"))
-		{
-			this.velocity = this.jumpHeight;
-			this.radius++;
-		}
-		if(this.speed > 0)
-		{
-			this.scale.x = -0.35;
-
-			TweenLite.to(
-				Game.PIXI.Camera.scale,
-				3,
-				{
-					x: 1,
-					y: 1
-				},
-				Linear.easeIn
-			)
-			
-
-		}
-		else if(this.speed < 0)
-		{
-			this.scale.x = 0.35;
-
-			TweenLite.to(
-				Game.PIXI.Camera.scale,
-				3,
-				{
-					x: 1,
-					y: 1
-				},
-				Linear.easeIn
-			)
-
-		}
-		else if (!this.cameraUnlocked)
-		{
-			TweenLite.to(
-				Game.PIXI.Camera.scale,
-				2,
-				{
-					x: 1.3,
-					y: 1.3
-				},
-				Bounce.easeOut
-			)
-		}
-
-
-
-		if (!this.cameraUnlocked) {
-			var wobble = Math.sin(this.angle*Math.PI/180*20);
 			this.position.x = Math.cos(this.angle * Math.PI / 180) * this.radius;
 			this.position.y = Math.sin(this.angle * Math.PI / 180) * (this.radius + wobble*4);
-
-			this.rotation = this.angle*Math.PI/180+Math.PI/2;
-
-			this.angle+=this.speed*data.dt*StateManager.getState().world.timeScale;
-
-			var dx = 640-this.position.x/4 - Game.PIXI.Camera.position.x;
-			var dy = 360-this.position.y/4 - Game.PIXI.Camera.position.y;
-
-			var distance = Math.sqrt(dx*dx + dy*dy);
-
-			var movement = Math.Slerp(Game.PIXI.Camera.position.x, Game.PIXI.Camera.position.y, 640-this.position.x / 4, 360 - this.position.y / 4, distance / 2 * data.dt*StateManager.getState().world.timeScale);
-
-			if (movement !== null)
-			{
-				Game.PIXI.Camera.position.x += movement.x;
-				Game.PIXI.Camera.position.y += movement.y;
-			}
 		}
 	}
 

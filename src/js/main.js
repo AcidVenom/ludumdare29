@@ -25,6 +25,7 @@ function main()
     	miners: [],
     	ui: null,
 		name: "level",
+		gameOver: false,
 
 		initialise: function() {
 			this.player = null;
@@ -32,11 +33,12 @@ function main()
 			this.enemies = [];
 			this.miners = [];
 			this.ui = null;
+			this.gameOver = false;
     		this.hotspotMiners = Math.random() * 90;
     		this.hotspotEnemies = Math.random() * 90 + 180;
     		this.redOverlay = new Overlay();
     		this.player = new Player(Math.random() * 360, this.world);
-    		this.ui = new UI(this.stability);
+    		this.ui = new UI(this.maxStability);
 			this.world = new World();
 			this.sorted = false;
 

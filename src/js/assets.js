@@ -17,6 +17,7 @@ Game.Assets = {
 		Utils.Assets.Images + 'level/ui/sprGui.png',
 		Utils.Assets.Images + 'level/ui/sprStabilityBar.png',
 		Utils.Assets.Images + 'level/ui/sprCritical.png',
+		Utils.Assets.Images + 'level/ui/sprGameOver.png',
 		Utils.Assets.Images + 'level/characters/sprHammer.png',
 		Utils.Assets.Images + 'level/bgLevel.png',
 		Utils.Assets.Images + 'level/bgMountains.png',
