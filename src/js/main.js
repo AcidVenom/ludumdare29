@@ -113,6 +113,9 @@ function main()
 			this.world.update(data);
 		},
 		destroy: function() {
+			Game.PIXI.Stage.removeChild(this.ui.overlay);
+			Game.PIXI.Stage.removeChild(this.ui.deathReason);
+			Game.PIXI.Stage.removeChild(this.powerupBar);
 			Game.PIXI.Camera.children = [];
 		}
 	});
