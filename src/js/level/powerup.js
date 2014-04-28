@@ -11,23 +11,97 @@ var PowerupBar = function () {
 
 	var slider1 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprPowerupBarSlider.png']),
 		stretch1 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprPowerupBarStretch.png']);
-	slider1.position.x += 99;
+	slider1.position.x += 0;
 	slider1.position.y += 80;
-	stretch1.position.x +=
+	stretch1.position.x += 1;
+	stretch1.position.y += -32;
+	stretch1.scale.y = 0.90;
 	slider1.__z = 3000;
 	stretch1.__z = 3000;
 	container.addChild(slider1);
 	slider1.addChild(stretch1);
 
-	var slider2 = new PIXI.DisplayObjectContainer();
+	var slider2 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprPowerupBarSlider.png']),
+		stretch2 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprPowerupBarStretch.png']);
+	slider2.position.x += 99;
+	slider2.position.y += 173;
+	slider2.__z = 3000;
+	stretch2.__z = 3000;
+	container.addChild(slider2);
+	slider2.addChild(stretch2);
 
-	var slider3 = new PIXI.DisplayObjectContainer();
+	var slider3 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprPowerupBarSlider.png']),
+		stretch3 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprPowerupBarStretch.png']);
+	slider3.position.x += 99;
+	slider3.position.y += 286;
+	stretch1.position.x += 1;
+	stretch1.position.y += 17;
+	stretch1.scale.y = 0.90;
+	slider3.__z = 3000;
+	stretch3.__z = 3000;
+	container.addChild(slider3);
+	slider3.addChild(stretch3);
 
-	var slider4 = new PIXI.DisplayObjectContainer();
+	var slider4 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprPowerupBarSlider.png']),
+		stretch4 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprPowerupBarStretch.png']);
+	slider4.position.x += 99;
+	slider4.position.y += 402;
+	stretch1.position.x += 1;
+	stretch1.position.y += 17;
+	stretch1.scale.y = 0.90;
+	slider4.__z = 3000;
+	stretch4.__z = 3000;
+	container.addChild(slider4);
+	slider4.addChild(stretch4);
 
-	var slider5 = new PIXI.DisplayObjectContainer();
+	var slider5 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprPowerupBarSlider.png']),
+		stretch5 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprPowerupBarStretch.png']);
+	slider5.position.x += 99;
+	slider5.position.y += 497;
+	stretch1.position.x += 1;
+	stretch1.position.y += 17;
+	stretch1.scale.y = 0.90;
+	slider5.__z = 3000;
+	stretch5.__z = 3000;
+	container.addChild(slider5);
+	slider5.addChild(stretch5);
 
-	this.update = function () {
+	container.update = function () {
+		// regen
+		if (PowerupManager.powerupStates.minersRegen.timeLeft > 0 && slider1.position.x < 99 && !slider1.tweenedIn) {
+			TweenLite.to(
+				slider1.position,
+				0.5,
+				{
+					x: 99,
+					ease: Quad.easeOut
+				}
+			);
+			slider1.tweenedIn = true;
+			slider1.tweenedOut = false;
+			console.log('hi');
+		} else if (PowerupManager.powerupStates.minersRegen.timeLeft < 0 && slider1.position.x > 0 && !slider1.tweenedOut){
+			TweenLite.to(
+				slider1.position,
+				0.5,
+				{
+					x: 0,
+					ease: Quad.easeIn
+				}
+			);
+			slider1.tweenedIn = false;
+			slider1.tweenedOut = true;
+		} else {
+			stretch1.scale.x = 81 / 600 * PowerupManager.powerupStates.minersRegen.timeLeft;
+		}
+
+		// miners shield
+
+		// extra miners
+
+		// infinite stability
+
+		// damage increase
 	};
 
 	return container;
@@ -76,7 +150,7 @@ var PowerupManager = (function () {
 				}
 			}
 
-			if (Math.random()*500 >= 498) {
+			if (Math.random()*500 >= 2) {
 				var rnd = Math.floor(Math.random()*5),
 					type,
 					texture;
@@ -94,7 +168,7 @@ var PowerupManager = (function () {
 						texture = PIXI.TextureCache[Utils.Assets.Images + 'level/sprMinersShield.png'];
 					break;
 					case 3:
-						type = 'minerRegen';
+						type = 'minersRegen';
 						texture = PIXI.TextureCache[Utils.Assets.Images + 'level/sprRegenMiners.png'];
 					break;
 					case 4:
@@ -110,7 +184,7 @@ var PowerupManager = (function () {
 
 			this.powerupStates.damageIncrease.timeLeft--;
 			this.powerupStates.minersShield.timeLeft--;
-			this.powerupStates.minerRegen.timeLeft--;
+			this.powerupStates.minersRegen.timeLeft--;
 			this.powerupStates.infiniteStability.timeLeft--;
 		},
 		getPowerupState: function (powerup) {
@@ -124,7 +198,7 @@ var PowerupManager = (function () {
 			minersShield: {
 				timeLeft: 0
 			},
-			minerRegen: {
+			minersRegen: {
 				timeLeft: 0
 			},
 			infiniteStability: {

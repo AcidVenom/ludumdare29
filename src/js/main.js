@@ -98,6 +98,7 @@ function main()
 				this.sorted = true;
 			}
 			PowerupManager.update(data);
+			this.powerupBar.update(data);
 			this.player.update(data);
 			this.timer+=0.01;
 			this.redOverlay.update(data);
