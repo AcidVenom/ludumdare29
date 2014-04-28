@@ -19,8 +19,37 @@ var ImpactArea = function(angle,range,damage,world)
 
 var World = function()
 {
-	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprWorld.png']),
-        container = new PIXI.DisplayObjectContainer();
+	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprWorld.png']);
+    
+    this.lava = new PIXI.DisplayObjectContainer();
+
+    this.lavaLayer1 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprLava1.png']);
+    this.lavaLayer2 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprLava2.png']);
+    this.lavaLayer3 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprLava3.png']);
+
+    this.lavaLayer1.anchor.x = 0.5;
+    this.lavaLayer2.anchor.x = 0.5;
+    this.lavaLayer3.anchor.x = 0.5;
+
+    this.lavaLayer1.anchor.y = 0.5;
+    this.lavaLayer2.anchor.y = 0.5;
+    this.lavaLayer3.anchor.y = 0.5;
+
+    this.lavaLayer1.pivot.x = 0.5;
+    this.lavaLayer2.pivot.x = 0.5;
+    this.lavaLayer3.pivot.x = 0.5;
+
+    this.lavaLayer1.pivot.y = 0.5;
+    this.lavaLayer2.pivot.y = 0.5;
+    this.lavaLayer3.pivot.y = 0.5;
+
+    this.lava.addChild(this.lavaLayer3);
+    this.lava.addChild(this.lavaLayer2);
+    this.lava.addChild(this.lavaLayer1);
+    
+
+    this.lava.position.y -= 6;
+    this.lava.position.x -= 1;
 
     extend(this, sprite);
     extend(this, GameObject);
@@ -107,6 +136,10 @@ var World = function()
 
     this.update = function()
     {
+        this.lavaLayer1.rotation += 0.01;
+        this.lavaLayer2.rotation -= 0.01;
+        this.lavaLayer3.rotation += 0.005;
+
         for(var i = 0; i < this.impactAreas.length; ++i)
         {
             this.impactAreas[i].update();
@@ -164,6 +197,7 @@ var World = function()
     Game.PIXI.Camera.addChild(this.treeLine1);
     Game.PIXI.Camera.addChild(this.clouds);
     Game.PIXI.Camera.addChild(this);
+    Game.PIXI.Camera.addChild(this.lava);
 
     this.spawnEnemies();
     this.spawnMiners();
