@@ -73,22 +73,22 @@ var Player = function(x, y, cx, cy)
 
         if (Input.isDown('down')) {
             pressed++;
-            moved.y += 250 * data.dt;
+            moved.y += 250 * data.dt*StateManager.getState().world.timeScale;
         }
 
         if (Input.isDown('up')) {
             pressed++;
-            moved.y -= 250 * data.dt;
+            moved.y -= 250 * data.dt*StateManager.getState().world.timeScale;
         }
 
         if (Input.isDown('right')) {
             pressed++;
-            moved.x += 250 * data.dt;
+            moved.x += 250 * data.dt*StateManager.getState().world.timeScale;
         }
 
         if (Input.isDown('left')) {
             pressed++;
-            moved.x -= 250 * data.dt;
+            moved.x -= 250 * data.dt*StateManager.getState().world.timeScale;
         }
 
         if (pressed > 1) {

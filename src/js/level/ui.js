@@ -52,9 +52,9 @@ var StabilityBar = function(val)
 	this.textWave.position.x -= 5;
 	this.timer = 0;
 
-	this.update = function()
+	this.update = function(data)
 	{
-		this.timer++;
+		this.timer+=1* data.dt*StateManager.getState().world.timeScale*10;
 		this.value = StateManager.getState().stability;
 		this.bar.scale.x = 138/this.maxValue * this.value;
 
@@ -62,9 +62,9 @@ var StabilityBar = function(val)
 		this.textMiners.setText(StateManager.getState().miners.length);
 		this.textWave.setText(StateManager.getState().world.wave + 1);
 
-		this.rotation = Math.sin(this.timer*0.01)/4;
-		this.scale.x = 1+Math.abs(Math.sin(this.timer*0.01))/16;
-		this.scale.y = 1+Math.abs(Math.sin(this.timer*0.01))/16;
+		this.rotation = Math.sin(this.timer*0.01)/3;
+		this.scale.x = 1+Math.abs(Math.sin(this.timer*0.01))/10;
+		this.scale.y = 1+Math.abs(Math.sin(this.timer*0.01))/10;
 	}
 
 	this.textGoblins.__z = 2000;
@@ -78,8 +78,8 @@ var UI = function(val)
 {
 	this.bar = new StabilityBar(val);
 
-	this.update = function()
+	this.update = function(data)
 	{
-		this.bar.update();
+		this.bar.update(data);
 	}
 }

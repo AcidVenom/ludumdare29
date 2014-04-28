@@ -152,6 +152,7 @@ var World = function()
     this.ground.__z = 3;
     this.treeLine1.__z = 4;
     this.clouds.__z = 999;
+    this.timeScale = 1;
 
     this.__z = 5;
 

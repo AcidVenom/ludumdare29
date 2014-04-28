@@ -75,7 +75,7 @@ var Emitter = function (settings) {
 			}
 		}
 
-		this.time += data.dt;
+		this.time += data.dt*StateManager.getState().world.timeScale;
 		if (this.time >= settings.emitInterval) {
 			this.time = 0;
 

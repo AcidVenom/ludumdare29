@@ -52,8 +52,8 @@ function main()
 			for (var i = 0; i < this.enemies.length; ++i) {
 				this.enemies[i].update(data);
 			}
-			this.ui.update();
-			this.world.update();
+			this.ui.update(data);
+			this.world.update(data);
 		},
 		destroy: function() {
 			Game.PIXI.Camera.children = [];

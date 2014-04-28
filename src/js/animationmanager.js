@@ -92,7 +92,7 @@ var AnimationManager = function () {
 
                 if (anim.state == this.__states.PLAYING)
                 {
-                    anim.currentFrame.timeShown += data.dt;
+                    anim.currentFrame.timeShown += data.dt*StateManager.getState().world.timeScale;
                     
                     if (anim.currentFrame.timeShown >= anim.frameRate) {
                         if (!anim.reversed) {
