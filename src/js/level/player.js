@@ -161,7 +161,7 @@ var Player = function(angle, world)
 	
 	this.animations.mainSprite = this;
 	this.animations.add("smash",{
-        frameRate: 0.6,
+        frameRate: 0.2,
         frames: frames,
         loop: true,
         reversed: false,
@@ -493,13 +493,13 @@ var Player = function(angle, world)
 				this.cameraUnlocked = true;
 				setTimeout(function () {
 					StateManager.getState().player.animations.play('smash');
-				}, 750);
+				}, 0);
 				StateManager.getState().player.scale.x = 1;
 				StateManager.getState().player.scale.y = 1;
 				this.speed = 0;
 				TweenLite.to(
 					player.position,
-					3,
+					2.5,
 					{
 						x: Math.cos(player.angle * Math.PI / 180) * (player.radius + 150),
 						y: Math.sin(player.angle * Math.PI / 180) * (player.radius + 150),
@@ -508,7 +508,7 @@ var Player = function(angle, world)
 				);
 				TweenLite.to(
 					Game.PIXI.Camera.scale,
-					3,
+					1,
 					{
 						x: 0.85,
 						y: 0.85,

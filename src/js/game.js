@@ -81,13 +81,17 @@ var Game = {
     },
     sort: function () {
         if (Game._initialized) {
-            Game.PIXI.Stage.children.sort(function (a, b) {
-                return a.__z - b.__z;
-            });
-
-            Game.PIXI.Camera.children.sort(function (a, b) {
-                return a.__z - b.__z;
-            });
+            var doSort = function (obj) {
+                if (obj.children) {
+                    obj.children.sort(function (a, b) {
+                        return a.__z - b.__z;
+                    });
+                    for (var i = 0; i < obj.children.length; i++) {
+                        doSort(obj.children);
+                    }
+                }
+            };
+            doSort(Game.PIXI.Stage);
         }
     },
     resizeGame: function () {
