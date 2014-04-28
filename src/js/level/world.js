@@ -120,6 +120,12 @@ var World = function()
 
     this.createImpact = function(angle,range,damage)
     {
+        if (PowerupManager.powerupStates.damageIncrease.timeLeft > 0) {
+            range *= 1.1;
+            damage *= 1.1;
+            console.log('hi');
+        }
+
         var impact = new ImpactArea(angle,range,damage,this);
         this.impactAreas.push(impact);
     }
@@ -127,6 +133,14 @@ var World = function()
     this.spawnMiners = function()
     {
         for (var i = 0; i < 3; ++i) {
+            StateManager.getState().miners.push(new Miner(Math.random() * 360, this, StateManager.getState().hotspotMiners));
+            StateManager.getState().miners[StateManager.getState().miners.length-1].alpha = 0;
+        }
+    }
+
+    this.spawnExtraMiners = function(x)
+    {
+        for (var i = 0; i < x; ++i) {
             StateManager.getState().miners.push(new Miner(Math.random() * 360, this, StateManager.getState().hotspotMiners));
             StateManager.getState().miners[StateManager.getState().miners.length-1].alpha = 0;
         }

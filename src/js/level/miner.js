@@ -86,6 +86,14 @@ var Miner = function (angle, world, hotspot) {
 	this.radius--;
 
 	this.update = function (data) {
+		if (PowerupManager.powerupStates.minersRegen.timeLeft > 0) {
+			if (this.health.__health + 1 > 100) {
+				this.health.__health = 100;
+			} else {
+				this.health.__health += 1;
+			}
+		}
+
 		if (this.health.__health <= 0)
 		{
 			this.dead = true;

@@ -212,14 +212,17 @@ var Player = function(angle, world)
         cb: function(){ 
         	StateManager.getState().player.animations.play("walk"); 
         	StateManager.getState().player.radius = StateManager.getState().player.collisionPoint;
-        	if(StateManager.getState().stability - 80 < 0)
-        	{
-        		StateManager.getState().stability = 0;
-        	}
-        	else
-        	{
-        		StateManager.getState().stability -= 80;
-        	}
+        	
+        	if(PowerupManager.powerupStates.infiniteStability.timeLeft <= 0) {
+	        	if(StateManager.getState().stability - 80 < 0)
+	        	{
+	        		StateManager.getState().stability = 0;
+	        	}
+	        	else
+	        	{
+	        		StateManager.getState().stability -= 80;
+	        	}
+	        }
         }
 	});
 
@@ -252,13 +255,15 @@ var Player = function(angle, world)
 	        	animateHammer(hammer3, 20, function () {
 	        		//Game.PIXI.Camera.scale.x = 0.5;
 					//Game.PIXI.Camera.scale.y = 0.5;
-					if(StateManager.getState().stability - 60 <= 0)
-					{
-						StateManager.getState().stability = 0;
-					}
-					else
-					{
-						StateManager.getState().stability -= 60;
+					if(PowerupManager.powerupStates.infiniteStability.timeLeft <= 0) {
+						if(StateManager.getState().stability - 60 <= 0)
+						{
+							StateManager.getState().stability = 0;
+						}
+						else
+						{
+							StateManager.getState().stability -= 60;
+						}
 					}
 
 					StateManager.getState().world.createImpact(StateManager.getState().player.angle,400,150);
@@ -806,13 +811,15 @@ var Player = function(angle, world)
 					this.animations.setAnimation("slam");
 					this.speed = 0;
 
-					if(StateManager.getState().stability - 5 <= 0)
-					{
-						StateManager.getState().stability = 0;
-					}
-					else
-					{
-						StateManager.getState().stability -= 5;
+					if(PowerupManager.powerupStates.infiniteStability.timeLeft <= 0) {
+						if(StateManager.getState().stability - 5 <= 0)
+						{
+							StateManager.getState().stability = 0;
+						}
+						else
+						{
+							StateManager.getState().stability -= 5;
+						}
 					}
 				}
 			}

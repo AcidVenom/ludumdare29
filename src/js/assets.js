@@ -61,5 +61,6 @@ Game.Assets = {
 		Utils.Assets.Images + 'level/sprMinersShield.png',
 		Utils.Assets.Images + 'level/sprRegenMiners.png',
 		Utils.Assets.Images + 'level/sprStabilityShield.png',
+		Utils.Assets.Images + 'level/sprPowerupGlow.png'
 	]
 };

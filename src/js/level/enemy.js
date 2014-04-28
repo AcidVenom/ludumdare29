@@ -216,7 +216,7 @@ var Enemy = function (angle, world, type) {
 				else
 				{
 					this.speed = 0;
-					if (this.target.miner.health.__health > 0)
+					if (this.target.miner.health.__health > 0 && PowerupManager.powerupStates.minersShield.timeLeft <= 0)
 					{
 						if(this.target.miner.radius == this.target.miner.collisionPoint)
 						{
