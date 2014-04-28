@@ -166,12 +166,12 @@ var Enemy = function (angle, world) {
 					this.target.miner.targeted = true;
 					if (this.angle - 180 < this.target.miner.angle - 180)
 					{
-						this.speed = 10*data.dt;
+						this.speed = 10*data.dt*StateManager.getState().world.timeScale;
 					}
 
 					if (this.angle - 180 > this.target.miner.angle - 180)
 					{
-						this.speed = -10*data.dt;
+						this.speed = -10*data.dt*StateManager.getState().world.timeScale;
 					}
 				}
 				else
@@ -205,11 +205,11 @@ var Enemy = function (angle, world) {
 					switch(this.move)
 					{
 						case 0:
-						this.speed = -10*data.dt;
+						this.speed = -2.5;
 						break;
 
 						case 1:
-						this.speed = 10*data.dt;
+						this.speed = 2.5;
 						break;
 
 						default:
@@ -232,8 +232,8 @@ var Enemy = function (angle, world) {
 
 			if(this.radius < this.collisionPoint)
 			{
-				this.velocity += 5 * data.dt;
-				this.radius += this.velocity;
+				this.velocity += 5 * data.dt*StateManager.getState().world.timeScale;
+				this.radius += 5*this.velocity * data.dt*StateManager.getState().world.timeScale;
 			}
 
 			if(this.radius > this.collisionPoint)
@@ -259,7 +259,7 @@ var Enemy = function (angle, world) {
 
 			this.rotation = this.angle*Math.PI/180+Math.PI/2;
 
-			this.angle+=this.speed*data.dt;
+			this.angle+=this.speed*data.dt*StateManager.getState().world.timeScale;
 
 		}
 		else

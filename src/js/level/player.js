@@ -64,11 +64,12 @@ var StoneChunk = function(player,prevChunk,dir,chunkCount)
 			{
 				self.setPrevScale();
 			}
-			
-		},10)
+
+		},50-50*StateManager.getState().world.timeScale);
 	}
 	else
 	{
+		StateManager.getState().world.createImpact(StateManager.getState().player.angle - chunkcount * 3,300,80);
 		var self = this;
 		setTimeout(function(){
 			player.cameraUnlocked = false;
@@ -82,7 +83,7 @@ var StoneChunk = function(player,prevChunk,dir,chunkCount)
 				Game.PIXI.Camera.removeChild(current);
 				current = current.prev;
 			}
-
+			StateManager.getState().world.timeScale = 1;
 			Game.PIXI.Camera.removeChild(current);
 		},500);
 	}
@@ -285,21 +286,21 @@ var Player = function(angle, world)
 						onParticleUpdate: function (particle, data) {
 							if(particle.direction == 0)
 							{
-								particle.targetAngle+=particle.bounce/30;
-								particle.rotation += 0.1;
+								particle.targetAngle+=particle.bounce/10*data.dt*StateManager.getState().world.timeScale;
+								particle.rotation += 2*data.dt*StateManager.getState().world.timeScale;
 							}
 							else
 							{
-								particle.targetAngle-=particle.bounce/30;
-								particle.rotation -= 0.1;
+								particle.targetAngle-=particle.bounce/10*data.dt*StateManager.getState().world.timeScale;
+								particle.rotation -= 0.5*data.dt*StateManager.getState().world.timeScale;
 							}
 
 							if(particle.scale.x > 0)
 							{
-								particle.alpha-=0.001;
+								particle.alpha-=0.01*data.dt*StateManager.getState().world.timeScale;
 
-								particle.scale.x-=0.005;
-								particle.scale.y-=0.005;
+								particle.scale.x-=0.01*data.dt*StateManager.getState().world.timeScale;
+								particle.scale.y-=0.01*data.dt*StateManager.getState().world.timeScale;
 							}
 
 							if(particle.scale.x <= 0)
@@ -312,15 +313,15 @@ var Player = function(angle, world)
 
 							if(particle.radius > player.collisionPoint)
 							{
-								particle.velocity+=0.5;
-								particle.radius -= particle.velocity-Math.random()*5;
+								particle.velocity+=2*data.dt*StateManager.getState().world.timeScale;
+								particle.radius -= particle.velocity-Math.random()*5*data.dt*StateManager.getState().world.timeScale;
 							}
 
 							if(particle.radius <= player.collisionPoint && particle.bounce > 0)
 							{
 								particle.radius = player.collisionPoint+1;
 								particle.bounce -= 5;
-								particle.velocity = -particle.bounce/2;
+								particle.velocity = -particle.bounce*data.dt*StateManager.getState().world.timeScale*2;
 							}
 
 							if(particle.bounce < 1)
@@ -494,12 +495,12 @@ var Player = function(angle, world)
 			this.angle = 359;
 		}
 
-		StateManager.getState().world.mountains.rotation+=0.0008;
-		StateManager.getState().world.treeLine2.rotation-=0.0004;
-		StateManager.getState().world.treeLine2.rotation-=0.0020;
-		StateManager.getState().world.clouds.rotation+=0.004;
+		StateManager.getState().world.mountains.rotation+=0.008*data.dt*StateManager.getState().world.timeScale;
+		StateManager.getState().world.treeLine2.rotation-=0.004*data.dt*StateManager.getState().world.timeScale;
+		StateManager.getState().world.treeLine2.rotation-=0.02*data.dt*StateManager.getState().world.timeScale;
+		StateManager.getState().world.clouds.rotation+=0.04*data.dt*StateManager.getState().world.timeScale;
 
-		if(this.radius == this.collisionPoint)
+		if(this.radius == this.collisionPoint && (this.speed > 0 || this.speed < 0))
 		{
 			this.puffs.push(new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprPuff.png']));
 			var puff = this.puffs[this.puffs.length-1];
@@ -520,13 +521,12 @@ var Player = function(angle, world)
 
 		for(var i = 0; i < this.puffs.length-1; ++i)
 		{
-			this.puffs[i].lifeTime++;
-			this.puffs[i].rotation += 0.001;
-			this.puffs[i].position.x -= Math.cos(this.angle*Math.PI/180-Math.PI*this.speed/this.maxSpeed)*1;
-			this.puffs[i].position.y -= Math.sin(this.angle*Math.PI/180-Math.PI*this.speed/this.maxSpeed)*1;
-			this.puffs[i].scale.x += Math.abs(this.speed)*0.0025;
+			this.puffs[i].rotation += 0.1*data.dt*StateManager.getState().world.timeScale;
+			this.puffs[i].position.x -= Math.cos(this.angle*Math.PI/180-Math.PI*this.speed/this.maxSpeed)*10*data.dt*StateManager.getState().world.timeScale;
+			this.puffs[i].position.y -= Math.sin(this.angle*Math.PI/180-Math.PI*this.speed/this.maxSpeed)*10*data.dt*StateManager.getState().world.timeScale;
+			this.puffs[i].scale.x += Math.abs(this.speed)*0.02*data.dt*StateManager.getState().world.timeScale;
 			this.puffs[i].scale.y = this.puffs[i].scale.x;
-			this.puffs[i].alpha -= 0.025;
+			this.puffs[i].alpha -= 0.15*data.dt*StateManager.getState().world.timeScale;
 
 			if (this.puffs[i].alpha < 0)
 			{
@@ -631,19 +631,18 @@ var Player = function(angle, world)
 
 		if ( StateManager.getState().stability < StateManager.getState().maxStability && !this.smashing && !this.slamming && !this._180)
 		{
-			if (StateManager.getState().stability + 0.5 > StateManager.getState().maxStability)
+			if (StateManager.getState().stability + 2* data.dt*StateManager.getState().world.timeScale > StateManager.getState().maxStability)
 			{
 				StateManager.getState().stability = StateManager.getState().maxStability
 			}
 			else
 			{
-				StateManager.getState().stability += 0.5;
+				StateManager.getState().stability += 2* data.dt*StateManager.getState().world.timeScale;
 			}				
 		}
 
 		if(!this.slamming && !this.smashing && !this._180)
 		{
-
 			if(Input.isDown("left"))
 			{
 				
@@ -653,7 +652,7 @@ var Player = function(angle, world)
 				}
 				if (this.speed > -this.maxSpeed)
 				{
-					this.speed-=0.5;
+					this.speed-=3*data.dt*StateManager.getState().world.timeScale;
 				}
 				this.animations.setAnimation("walk");
 			}
@@ -666,7 +665,7 @@ var Player = function(angle, world)
 				}
 				if (this.speed < this.maxSpeed)
 				{
-					this.speed+=0.5;
+					this.speed+=3*data.dt*StateManager.getState().world.timeScale;
 				}
 				this.animations.setAnimation("walk");
 			}
@@ -674,12 +673,17 @@ var Player = function(angle, world)
 			{
 				if(this.speed > 0)
 				{
-					this.speed-=0.5;
+					this.speed-=3*data.dt*StateManager.getState().world.timeScale;
 				}
 				else if(this.speed < 0)
 				{
-					this.speed+=0.5;
+					this.speed+=3*data.dt*StateManager.getState().world.timeScale;
 				}
+			}
+
+			if(this.speed > -3*data.dt*StateManager.getState().world.timeScale && this.speed < 3*data.dt*StateManager.getState().world.timeScale)
+			{
+				this.speed = 0;
 			}
 
 			this.animations.setFramerate("walk",this.maxSpeed/20-Math.abs(this.speed)/20);
@@ -696,8 +700,8 @@ var Player = function(angle, world)
 
 		if(this.radius > this.collisionPoint)
 		{
-			this.velocity += 5 * data.dt;
-			this.radius-=this.velocity;
+			this.velocity += 5*data.dt*StateManager.getState().world.timeScale;
+			this.radius-=5*this.velocity*data.dt*StateManager.getState().world.timeScale;
 		}
 
 		if(this.radius < this.collisionPoint)
@@ -764,14 +768,14 @@ var Player = function(angle, world)
 
 			this.rotation = this.angle*Math.PI/180+Math.PI/2;
 
-			this.angle+=this.speed*data.dt;
+			this.angle+=this.speed*data.dt*StateManager.getState().world.timeScale;
 
 			var dx = 640-this.position.x/4 - Game.PIXI.Camera.position.x;
 			var dy = 360-this.position.y/4 - Game.PIXI.Camera.position.y;
 
 			var distance = Math.sqrt(dx*dx + dy*dy);
 
-			var movement = Math.Slerp(Game.PIXI.Camera.position.x, Game.PIXI.Camera.position.y, 640-this.position.x / 4, 360 - this.position.y / 4, distance / 2 * data.dt);
+			var movement = Math.Slerp(Game.PIXI.Camera.position.x, Game.PIXI.Camera.position.y, 640-this.position.x / 4, 360 - this.position.y / 4, distance / 2 * data.dt*StateManager.getState().world.timeScale);
 
 			if (movement !== null)
 			{

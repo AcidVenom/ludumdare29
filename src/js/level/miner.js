@@ -116,11 +116,11 @@ var Miner = function (angle, world, hotspot) {
 				switch(this.direction)
 				{
 					case 0:
-					this.speed = 14*data.dt;
+					this.speed = 4;
 					break;
 
 					case 1:
-					this.speed = -14*data.dt;
+					this.speed = -4;
 					break;
 				}
 			}
@@ -143,8 +143,8 @@ var Miner = function (angle, world, hotspot) {
 
 			if(this.radius < this.collisionPoint)
 			{
-				this.velocity += 5 * data.dt;
-				this.radius += this.velocity;
+				this.velocity += 5 * data.dt*StateManager.getState().world.timeScale;
+				this.radius += 5*this.velocity * data.dt*StateManager.getState().world.timeScale;
 			}
 
 			if(this.radius > this.collisionPoint)
@@ -171,7 +171,7 @@ var Miner = function (angle, world, hotspot) {
 
 			this.rotation = this.angle*Math.PI/180+Math.PI/2;
 
-			this.angle+=this.speed*data.dt;
+			this.angle+=this.speed*data.dt*StateManager.getState().world.timeScale;
 
 			if(this.timer > 0)
 			{
