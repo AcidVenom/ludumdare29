@@ -75,6 +75,8 @@ var StoneChunk = function(player,prevChunk,dir,chunkCount)
 			player.cameraUnlocked = false;
 			player.chunkCount = 0;
 			player._180 = false;
+			player.anchor.x = 0.5;
+			player.anchor.y = 0.5;
 
 			Game.PIXI.Camera.removeChild(self);
 			var current = self.prev;
@@ -568,7 +570,11 @@ var Player = function(angle, world)
 		StateManager.getState().world.mountains.rotation+=0.008*data.dt*StateManager.getState().world.timeScale;
 		StateManager.getState().world.treeLine2.rotation-=0.004*data.dt*StateManager.getState().world.timeScale;
 		StateManager.getState().world.treeLine2.rotation-=0.02*data.dt*StateManager.getState().world.timeScale;
-		StateManager.getState().world.clouds.rotation+=0.04*data.dt*StateManager.getState().world.timeScale;
+		StateManager.getState().world.clouds.rotation+=0.01*data.dt*StateManager.getState().world.timeScale;
+
+		Game.PIXI.Camera.filters[0].uniforms.exposure.value = -Math.abs(Math.sin(StateManager.getState().world.clouds.rotation))/2;
+		Game.PIXI.Camera.filters[0].uniforms.saturation.value = -Math.abs(Math.sin(StateManager.getState().world.clouds.rotation))/2;
+		StateManager.getState().world.setFlareAlpha(Math.abs(Math.sin(StateManager.getState().world.clouds.rotation)));
 
 		if(this.radius == this.collisionPoint && (this.speed > 0 || this.speed < 0))
 		{

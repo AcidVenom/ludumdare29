@@ -44,9 +44,9 @@ var World = function()
     this.lavaLayer2.pivot.y = 0.5;
     this.lavaLayer3.pivot.y = 0.5;
 
-    this.lavaLayer1.__z = 500;
-    this.lavaLayer2.__z = 501;
-    this.lavaLayer3.__z = 502;
+    this.lavaLayer1.__z = 402;
+    this.lavaLayer2.__z = 401;
+    this.lavaLayer3.__z = 400;
 
     this.lava.addChild(this.lavaLayer3);
     this.lava.addChild(this.lavaLayer2);
@@ -248,6 +248,13 @@ var World = function()
         this.flares[i].position.y -= 300+i*50;
     }
 
+    this.setFlareAlpha = function(alpha)
+    {
+        for(var i = 0; i < 11; ++i)
+        {
+            this.flares[i].alpha = alpha;
+        }
+    }
 
     this.spawnEnemies();
     this.spawnMiners();
