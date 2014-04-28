@@ -78,10 +78,45 @@ var StabilityBar = function(val)
 var UI = function(val)
 {
 	this.bar = new StabilityBar(val);
+	this.criticals = [];
+
+	this.addCritical = function(angle)
+	{
+		var crit = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/ui/sprCritical.png']);
+		this.criticals.push(crit);
+		crit.position.x = 0;
+		crit.position.y = 0;
+		crit.anchor.x = 0.5;
+		crit.anchor.y = 0.5;
+		crit.pivot.x = 0.5;
+		crit.pivot.y = 0.5;
+		crit.scale.x = 0.5;
+		crit.scale.y = 0.5;
+		crit.__z = 2000;
+		Game.sort();
+
+		Game.PIXI.Camera.addChild(crit);
+		
+	}
 
 	this.update = function(data)
 	{
 		this.bar.update(data);
+		for(var i = 0; i < this.criticals.length; ++i)
+		{
+			var crit = this.criticals[i];
+
+			crit.scale.x += 0.1;
+			crit.scale.y += 0.1;
+			crit.alpha -= 0.05;
+			crit.radius -= 10;
+
+			if(crit.alpha < 0)
+			{
+				Game.PIXI.Camera.removeChild(crit);
+				this.criticals.splice(i,1);
+			}
+		}
 	}
 
 	Game.sort();

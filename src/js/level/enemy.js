@@ -135,6 +135,13 @@ var Enemy = function (angle, world) {
 
 				if(dist < impact.range)
 				{
+					if (dist*1.5 < impact.range)
+					{	
+						if(StateManager.getState().ui.criticals.length < 10)
+						{
+							StateManager.getState().ui.addCritical(this.angle);
+						}
+					}
 					this.velocity = -8*impact.range/dist/2;
 					this.radius--;
 					this.tint = 0xFF0000;
