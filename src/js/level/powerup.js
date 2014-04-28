@@ -1,10 +1,36 @@
 var PowerupBar = function () {
-	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprPowerupBar.png']);
-	sprite.position.x = Game.PIXI.Camera.position.x - 640;
-	sprite.position.y = Game.PIXI.Camera.position.y - 320;
+	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprPowerupBar.png']),
+		container = new PIXI.DisplayObjectContainer();
+	container.position.x = Game.PIXI.Camera.position.x - 640;
+	container.position.y = Game.PIXI.Camera.position.y - 320;
+	container.__z = 4000;
 	sprite.__z = 4000;
 
-	Game.PIXI.Stage.addChild(sprite);
+	Game.PIXI.Stage.addChild(container);
+	container.addChild(sprite);
+
+	var slider1 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprPowerupBarSlider.png']),
+		stretch1 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprPowerupBarStretch.png']);
+	slider1.position.x += 99;
+	slider1.position.y += 80;
+	stretch1.position.x +=
+	slider1.__z = 3000;
+	stretch1.__z = 3000;
+	container.addChild(slider1);
+	slider1.addChild(stretch1);
+
+	var slider2 = new PIXI.DisplayObjectContainer();
+
+	var slider3 = new PIXI.DisplayObjectContainer();
+
+	var slider4 = new PIXI.DisplayObjectContainer();
+
+	var slider5 = new PIXI.DisplayObjectContainer();
+
+	this.update = function () {
+	};
+
+	return container;
 };
 
 var PowerupManager = (function () {
@@ -38,13 +64,13 @@ var PowerupManager = (function () {
 
 						break;
 						case 'minersShield':
-
+							this.powerupStates.minersShield.timeLeft = 60 * 10;
 						break;
 						case 'minersRegen':
-
+							this.powerupStates.minersRegen.timeLeft = 60 * 10;
 						break;
 						case 'infiniteStability':
-						
+							this.powerupStates.infiniteStability.timeLeft = 60 * 10;
 						break;
 					}
 				}
@@ -81,6 +107,11 @@ var PowerupManager = (function () {
 				Game.PIXI.Camera.addChild(powerup);
 				this.existingPowerups.push(powerup);
 			}
+
+			this.powerupStates.damageIncrease.timeLeft--;
+			this.powerupStates.minersShield.timeLeft--;
+			this.powerupStates.minerRegen.timeLeft--;
+			this.powerupStates.infiniteStability.timeLeft--;
 		},
 		getPowerupState: function (powerup) {
 

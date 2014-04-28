@@ -20,7 +20,7 @@ var Overlay = function () {
 		time += 0.5;
 
 		if (remainder >= 0.7) {
-			sprite.alpha = Math.abs(Math.sin(time / 8));
+			sprite.alpha = Math.abs(Math.sin(time / 8)) - 0.3;
 		} else {
 			sprite.alpha = remainder;
 		}
