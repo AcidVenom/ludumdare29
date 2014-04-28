@@ -65,7 +65,7 @@ var StoneChunk = function(player,prevChunk,dir,chunkCount)
 				self.setPrevScale();
 			}
 
-		},50-50*StateManager.getState().world.timeScale);
+		},10/StateManager.getState().world.timeScale);
 	}
 	else
 	{
