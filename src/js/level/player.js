@@ -720,12 +720,12 @@ var Player = function(angle, world)
 
 			if(StateManager.getState().stability <= 0)
 			{
-				StateManager.getState().ui.deathReason.setText("The mines have collapsed due to heavy tremors!\nKeep in mind that you have a stability bar!\n\n\n\n\n\nPress ENTER to continue");
+				StateManager.getState().ui.deathReason.setText("The mines have collapsed due to heavy tremors!\nKeep in mind that you have a stability bar!\n\n\n\n\nYou got to wave " + String(StateManager.getState().world.wave) + "\nPress ENTER to continue");
 			}
 
 			if(StateManager.getState().miners.length < 1)
 			{
-				StateManager.getState().ui.deathReason.setText("All your dwarves have died!\nKill goblins to protect them!\n\n\n\n\n\nPress ENTER to continue");
+				StateManager.getState().ui.deathReason.setText("All your dwarves have died!\nKill goblins to protect them!\n\n\n\n\n" + String(StateManager.getState().world.wave) + "\nPress ENTER to continue");
 			}
 			StateManager.getState().gameOver = true;
 			this.cameraUnlocked = true;

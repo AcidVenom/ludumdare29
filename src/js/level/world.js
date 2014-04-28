@@ -172,28 +172,31 @@ var World = function()
             this.spawning = true;
             setTimeout(function()
             {
-                self.wave++;
-                self.spawnEnemies();
-
-                if(self.wave % 3 == 0)
+                if(!StateManager.getState().gameOver)
                 {
-                    self.spawnMiners();
-                }
+                    self.wave++;
+                    self.spawnEnemies();
 
-                for (var i = 0; i < StateManager.getState().miners.length; ++i) {
-                    var miner = StateManager.getState().miners[i];
+                    if(self.wave % 3 == 0)
+                    {
+                        self.spawnMiners();
+                    }
 
-                    if(miner.health.__health + 20 > 100)
-                    {
-                        miner.health.__health = 100;
+                    for (var i = 0; i < StateManager.getState().miners.length; ++i) {
+                        var miner = StateManager.getState().miners[i];
+
+                        if(miner.health.__health + 20 > 100)
+                        {
+                            miner.health.__health = 100;
+                        }
+                        else
+                        {
+                            miner.health.__health += 20;
+                        }
+                        miner.health.updateHealthbar();
                     }
-                    else
-                    {
-                        miner.health.__health += 20;
-                    }
-                    miner.health.updateHealthbar();
+                    self.spawning = false;
                 }
-                self.spawning = false;
             },1000);
         }
     }
