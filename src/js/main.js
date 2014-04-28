@@ -15,6 +15,11 @@ require(
 
 function main()
 {
+	music = new Audio('././assets/sounds/sndMusic.mp3');
+	music.addEventListener("ended", function () {
+		music.play();
+	});
+	music.play();
     StateManager.addState({
     	timer: 0,
     	stability: 100,
