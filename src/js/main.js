@@ -47,8 +47,8 @@ function main()
 			 
 			    // set the uniforms
 			    this.uniforms = {
-			    	exposure: {type: '1f', value: 0},
-			    	saturation: {type: '1f', value: 0}
+			    	exposure: {type: '1f', value: -0.35},
+			    	saturation: {type: '1f', value: -0.35}
 			    };
 			 
 			 

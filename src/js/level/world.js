@@ -244,8 +244,8 @@ var World = function()
 
     for(var i = 2; i < 11; ++i)
     {
-        this.flares[i].position.x += 300+i*30;
-        this.flares[i].position.y -= 300+i*30;
+        this.flares[i].position.x += 300+i*50;
+        this.flares[i].position.y -= 300+i*50;
     }
 
 
