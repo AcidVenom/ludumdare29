@@ -34,7 +34,8 @@ var AnimationManager = function () {
                     state: this.__states.STOPPED,
                     frameRate: animData.frameRate ? animData.frameRate : 0.16,
                     reversed: animData.reversed ? animData.reversed : false,
-                    cb: animData.cb ? animData.cb : undefined
+                    cb: animData.cb ? animData.cb : undefined,
+                    i: animData.i
                 };
                 newAnimation.frames = this.__createFrames(animData.frames);
                 this.__anims[name] = newAnimation; 

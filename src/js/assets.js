@@ -46,5 +46,7 @@ Game.Assets = {
 		Utils.Assets.Images + 'level/sprFlare9.png',
 		Utils.Assets.Images + 'level/sprFlare10.png',
 		Utils.Assets.Images + 'level/sprFlare11.png',
+		Utils.Assets.Images + 'level/characters/sprCharacter360Flame.png',
+		Utils.Assets.Images + 'level/characters/sprCharacter360Teleport.png'
 	]
 };
