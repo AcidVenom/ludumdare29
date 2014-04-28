@@ -16,6 +16,11 @@ require(
 
 function main()
 {
+	music = new Audio('././assets/sounds/sndMusic.mp3');
+	music.addEventListener("ended", function () {
+		music.play();
+	});
+	music.play();
     StateManager.addState({
     	timer: 0,
     	stability: 100,
@@ -26,6 +31,7 @@ function main()
     	miners: [],
     	ui: null,
 		name: "level",
+		gameOver: false,
 
 		initialise: function() {
 			this.player = null;
@@ -33,11 +39,12 @@ function main()
 			this.enemies = [];
 			this.miners = [];
 			this.ui = null;
+			this.gameOver = false;
     		this.hotspotMiners = Math.random() * 90;
     		this.hotspotEnemies = Math.random() * 90 + 180;
     		this.redOverlay = new Overlay();
     		this.player = new Player(Math.random() * 360, this.world);
-    		this.ui = new UI(this.stability);
+    		this.ui = new UI(this.maxStability);
 			this.world = new World();
 			this.powerupBar = new PowerupBar();
 			this.sorted = false;

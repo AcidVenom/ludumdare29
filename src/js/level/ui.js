@@ -63,8 +63,25 @@ var StabilityBar = function(val)
 		this.textWave.setText(StateManager.getState().world.wave + 1);
 
 		this.rotation = Math.sin(this.timer*0.01)/3;
+		if(!StateManager.getState().gameOver)
+		{
+			this.scale.y = 1+Math.abs(Math.sin(this.timer*0.01))/10;
+		}
+		else
+		{
+			this.textGoblins.alpha = 0;
+			this.textMiners.alpha = 0;
+			this.textWave.alpha = 0;
+			this.bar.alpha = 0;
+
+			if(Input.isDown("enter"))
+			{
+				StateManager.getState().stability = StateManager.getState().maxStability;
+				StateManager.switchState("level");
+			}
+		}
 		this.scale.x = 1+Math.abs(Math.sin(this.timer*0.01))/10;
-		this.scale.y = 1+Math.abs(Math.sin(this.timer*0.01))/10;
+		
 	}
 
 	this.textGoblins.__z = 2000;
@@ -79,6 +96,8 @@ var UI = function(val)
 {
 	this.bar = new StabilityBar(val);
 	this.criticals = [];
+	this.timer = 0;
+	this.speed = Math.PI/2 + 0.02;
 
 	this.addCritical = function(angle)
 	{
@@ -101,6 +120,22 @@ var UI = function(val)
 
 	this.update = function(data)
 	{
+		if(StateManager.getState().gameOver)
+		{
+			this.timer += this.speed;
+			this.bar.setTexture(PIXI.TextureCache[Utils.Assets.Images + 'level/ui/sprGameOver.png']);
+			StateManager.getState().world.timeScale = 0;
+			if(this.speed > 0)
+			{
+				this.speed -= 0.01;
+			}
+			else
+			{
+				this.speed = 0;
+			}
+			this.bar.scale.y = Math.sin(this.timer);
+		}
+		
 		this.bar.update(data);
 		for(var i = 0; i < this.criticals.length; ++i)
 		{
