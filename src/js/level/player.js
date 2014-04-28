@@ -770,7 +770,7 @@ var Player = function(angle, world)
 
 		if (Input.isDown("q"))
 		{
-			if (!this.slamming && !this.smashing && !this._180)
+			if (!this.slamming && !this.smashing && !this._180 && !this._360)
 			{
 				this.slamming = true;
 				this.animations.setAnimation("slam");
@@ -789,7 +789,7 @@ var Player = function(angle, world)
 
 		if (Input.isDown("w"))
 		{
-			if (!this.smashing && !this.slamming && !this._180)
+			if (!this.smashing && !this.slamming && !this._180 && !this._360)
 			{
 				Game.sort();
 
@@ -827,7 +827,7 @@ var Player = function(angle, world)
 
 		if (Input.isDown("e"))
 		{
-			if (!this.slamming && !this.smashing && !this._180)
+			if (!this.slamming && !this.smashing && !this._180 && !this._360)
 			{
 				this._180 = true;
 				this.animations.setAnimation("180");
