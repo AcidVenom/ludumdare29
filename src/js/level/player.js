@@ -1,19 +1,90 @@
-var StoneChunk = function(player)
+var StoneChunk = function(player,prevChunk,dir,chunkCount)
 {
-	if(player.chunkCount < 40)
+	var chunkcount = chunkCount;
+
+	this.prev = prevChunk;
+	this.dir = dir;
+
+
+	this.setPrevScale = function()
 	{
-		Game.PIXI.Camera.x = 640 - Math.cos((player.angle + player.chunkCount * 5.25) * Math.PI / 180) * player.collisionPoint + Math.random()*32;
-		Game.PIXI.Camera.y = 360 - Math.sin((player.angle + player.chunkCount * 5.25) * Math.PI / 180) * player.collisionPoint + Math.random()*32;
-		setTimeout(function()
+		if(this.prev)
 		{
-			var chunk = new StoneChunk(player);
-		},20)
+			if(this.prev.scale.x - 0.05 > 0)
+			{
+				this.prev.scale.x -= 0.05;
+				this.prev.scale.y -= 0.05;
+			}
+			else
+			{
+				this.prev.scale.x = 0;
+				this.prev.scale.y = 0;
+			}
+			this.prev.setPrevScale();
+		}
+	}
+
+	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/particles/partRock' + String(Math.floor(Math.random()*5) + 1) + '.png']);
+	extend(this,sprite);
+
+	if(this.dir == 0)
+	{
+		sprite.position.x = Math.cos((player.angle + chunkcount * 3) * Math.PI / 180) * (player.collisionPoint-20);
+		sprite.position.y = Math.sin((player.angle + chunkcount * 3) * Math.PI / 180) * (player.collisionPoint-20);
 	}
 	else
 	{
-		player.cameraUnlocked = false;
-		player.chunkCount = 0;
-		player._180 = false;
+		sprite.position.x = Math.cos((player.angle - chunkcount * 3) * Math.PI / 180) * (player.collisionPoint-20);
+		sprite.position.y = Math.sin((player.angle - chunkcount * 3) * Math.PI / 180) * (player.collisionPoint-20);
+	}
+	
+	sprite.anchor.x = 0.5;
+	sprite.anchor.y = 0.5;
+	
+	sprite.pivot.x = 0.5;
+	sprite.pivot.y = 0.5;
+
+	sprite.scale.x = 0.8+Math.random()*0.3;
+	sprite.rotation = Math.random()*Math.PI;
+
+	Game.PIXI.Camera.addChild(this);
+
+	if(chunkcount < 60)
+	{
+		if(this.dir == 0)
+		{
+			Game.PIXI.Camera.x = 640 - sprite.position.x + Math.random()*32;
+			Game.PIXI.Camera.y = 360 - sprite.position.y + Math.random()*32;
+		}
+		var self = this;
+		setTimeout(function()
+		{
+			var chunk = new StoneChunk(player,self,self.dir,++chunkcount);
+			if(self.prev)
+			{
+				self.setPrevScale();
+			}
+			
+		},10)
+	}
+	else
+	{
+		var self = this;
+		setTimeout(function(){
+			player.cameraUnlocked = false;
+			player.chunkCount = 0;
+			player._180 = false;
+
+			Game.PIXI.Camera.removeChild(self);
+			var current = self.prev;
+			while(current.prev)
+			{
+				Game.PIXI.Camera.removeChild(current);
+				current = current.prev;
+			}
+
+			Game.PIXI.Camera.removeChild(current);
+		},500);
 	}
 	player.chunkCount++;
 }
@@ -404,7 +475,8 @@ var Player = function(angle, world)
 
 	this.startChain = function()
 	{
-		var chunk = new StoneChunk(this);
+		var chunk1 = new StoneChunk(this,undefined,0,0),
+			chunk2 = new StoneChunk(this,undefined,1,0);
 	}
 
 	this.update = function(data)

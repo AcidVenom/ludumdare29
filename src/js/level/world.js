@@ -80,6 +80,7 @@ var World = function()
     this.clouds.pivot.y = 0.5;
 
     this.wave = 0;
+    this.spawning = false;
 
     this.createImpact = function(angle,range,damage)
     {
@@ -111,29 +112,35 @@ var World = function()
             this.impactAreas[i].update();
         }
 
-        if (StateManager.getState().enemies.length == 0)
+        if (StateManager.getState().enemies.length == 0 && this.spawning == false)
         {
-            this.wave++;
-            this.spawnEnemies();
-
-            if(this.wave % 5 == 0)
+            var self = this;
+            this.spawning = true;
+            setTimeout(function()
             {
-                this.spawnMiners();
-            }
+                self.wave++;
+                self.spawnEnemies();
 
-            for (var i = 0; i < StateManager.getState().miners.length; ++i) {
-                var miner = StateManager.getState().miners[i];
+                if(self.wave % 5 == 0)
+                {
+                    self.spawnMiners();
+                }
 
-                if(miner.health.__health + 10 > 100)
-                {
-                    miner.health.__health = 100;
+                for (var i = 0; i < StateManager.getState().miners.length; ++i) {
+                    var miner = StateManager.getState().miners[i];
+
+                    if(miner.health.__health + 10 > 100)
+                    {
+                        miner.health.__health = 100;
+                    }
+                    else
+                    {
+                        miner.health.__health+=10;
+                    }
+                    miner.health.updateHealthbar();
                 }
-                else
-                {
-                    miner.health.__health+=10;
-                }
-                miner.health.updateHealthbar();
-            }
+                self.spawning = false;
+            },1000);
         }
     }
 
