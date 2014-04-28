@@ -21,6 +21,101 @@ function main()
 		music.play();
 	});
 	music.play();
+
+	StateManager.addState({
+		name: "menu",
+		logo: null,
+
+		initialise: function()
+		{
+			this.logoFg = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/ui/sprLogoAnd.png']);
+			this.logoBg = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/ui/sprLogoBackground.png']);
+			this.background = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/bgLevel.png']);
+			this.logo = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/ui/sprLogo.png']);
+			this.logo.anchor.x = 0.5;
+			this.logo.anchor.y = 0.5;
+			this.logo.scale.x = 0;
+			this.logo.scale.y = 0;
+
+			this.logoBg.anchor.x = 0.5;
+			this.logoBg.anchor.y = 0.5;
+			this.logoBg.scale.x = 0;
+			this.logoBg.scale.y = 0;
+			this.logoBg.alpha = 0;
+
+			this.logoFg.scale.x = 2;
+			this.logoFg.scale.y = 2;
+			this.logoFg.alpha = 0;
+			this.logoFg.anchor.x = 0.5;
+			this.logoFg.anchor.y = 0.5;
+
+			this.background.anchor.x = 0.5;
+			this.background.anchor.y = 0.5;
+			this.speed = 0;
+
+			this.text = new PIXI.Text("Press ENTER to start!",
+				{
+					font: "bold 30px Arial",
+					fill: "#FFFFFF"
+				});
+
+			this.text.anchor.x = 0.5;
+			this.text.anchor.y = 0.5;
+			this.text.position.y += 50;
+			this.text.alpha = 0;
+			
+			this.timer = 0;
+			Game.PIXI.Camera.addChild(this.background);
+			Game.PIXI.Camera.addChild(this.logoBg);
+			Game.PIXI.Camera.addChild(this.logo);
+			Game.PIXI.Camera.addChild(this.logoFg);
+			Game.PIXI.Camera.addChild(this.text);
+		},
+
+		update: function()
+		{
+			if(this.logo.scale.x < 0.4)
+			{
+				this.speed += 0.001;
+				this.logo.scale.x += this.speed;
+				this.logo.scale.y += this.speed;
+
+				this.logoBg.scale.x += this.speed;
+				this.logoBg.scale.y += this.speed;
+
+				this.logoFg.scale.x -= this.speed*4;
+				this.logoFg.scale.y -= this.speed*4;
+			}
+			else
+			{
+				this.logo.rotation = Math.sin(this.timer)*0.2;
+				this.logoBg.rotation = Math.sin(this.timer)*0.2;
+				this.timer += 0.01;
+
+				if(this.logoBg.position.y > -100)
+				{
+					this.logoBg.position.y -= 0.5;
+				}
+			}
+
+			if(this.logoBg.alpha < 1)
+			{
+				this.logoBg.alpha += 0.01;
+				this.logoFg.alpha += 0.01;
+				this.text.alpha += 0.01;
+			}
+
+			if(Input.isDown("enter"))
+			{
+				StateManager.switchState("level");
+			}
+		},
+
+		destroy: function()
+		{
+			Game.PIXI.Camera.children = [];
+		},
+	})
     StateManager.addState({
     	timer: 0,
     	stability: 100,
@@ -121,5 +216,5 @@ function main()
 		}
 	});
 
-	StateManager.switchState("level");
+	StateManager.switchState("menu");
 }
