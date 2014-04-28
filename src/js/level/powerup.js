@@ -32,19 +32,19 @@ var PowerupManager = (function () {
 
 					switch (this.existingPowerups[i].type) {
 						case 'damageIncrease':
-							//this.powerupStates.damageIncrease
+							this.powerupStates.damageIncrease.timeLeft = 60 * 10;
 						break;
-						case 'damageIncrease':
+						case 'extraMiners':
 
 						break;
-						case 'damageIncrease':
+						case 'minersShield':
 
 						break;
-						case 'damageIncrease':
+						case 'minersRegen':
 
 						break;
-						case 'damageIncrease':
-
+						case 'infiniteStability':
+						
 						break;
 					}
 				}
