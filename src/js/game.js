@@ -86,8 +86,9 @@ var Game = {
                     obj.children.sort(function (a, b) {
                         return a.__z - b.__z;
                     });
+
                     for (var i = 0; i < obj.children.length; i++) {
-                        doSort(obj.children);
+                        doSort(obj.children[i]);
                     }
                 }
             };

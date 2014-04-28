@@ -32,7 +32,7 @@ Game.Assets = {
 		Utils.Assets.Images + 'level/particles/partFlash.png',
 		Utils.Assets.Images + 'level/sprLava1.png',
 		Utils.Assets.Images + 'level/sprLava2.png',
-		Utils.Assets.Images + 'level/sprLava3.png'
-
+		Utils.Assets.Images + 'level/sprLava3.png',
+		Utils.Assets.Images + 'level/sprRedGlow.png'
 	]
 };
