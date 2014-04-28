@@ -114,7 +114,7 @@ var Player = function(angle, world)
 	this.position.y = 0;
 	this.followPoint = {x: 0, y: 0};
 	this.puffs = [];
-	this.__z = 6;
+	this.__z = 800;
 	this.chunkCount = 0;
 
 	this.anchor.x = 0.5;
@@ -172,15 +172,16 @@ var Player = function(angle, world)
 	this.animations.add("slam",{
         frameRate: 0.1,
         frames: frames,
-        loop: true,
+        loop: false,
         reversed: false,
         cb: function(){ 
         	StateManager.getState().player.cameraUnlocked = true;
+        	StateManager.getState().world.createImpact(StateManager.getState().player.angle,112,80);
+        	StateManager.getState().player.animations.play("walk"); 
+        	StateManager.getState().player.slamming = false;
+
 			CameraController.shake(20, 0.025, 5, function () {
-				StateManager.getState().player.cameraUnlocked = false;
-	        	StateManager.getState().player.slamming = false; 
-	        	StateManager.getState().player.animations.play("walk"); 
-	        	StateManager.getState().world.createImpact(StateManager.getState().player.angle,112,80);
+				StateManager.getState().player.cameraUnlocked = false; 
 			});
         }
 	});

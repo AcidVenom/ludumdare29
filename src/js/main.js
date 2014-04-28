@@ -38,6 +38,7 @@ function main()
     		this.player = new Player(Math.random() * 360, this.world);
     		this.ui = new UI(this.stability);
 			this.world = new World();
+			this.sorted = false;
 
 			var Filter = function()
 			{
@@ -80,9 +81,13 @@ function main()
 
 			Game.PIXI.Camera.filters = filters;
 			Game.PIXI.Camera.addChild(this.world.clouds);
-			Game.sort();
 		},
 		update: function(data) {
+			if(!this.sorted)
+			{
+				Game.sort();
+				this.sorted = true;
+			}
 			this.player.update(data);
 			this.timer+=0.01;
 			this.redOverlay.update(data);
