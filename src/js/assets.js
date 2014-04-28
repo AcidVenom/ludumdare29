@@ -50,6 +50,9 @@ Game.Assets = {
 		Utils.Assets.Images + 'level/sprFlare11.png',
 		Utils.Assets.Images + 'level/characters/sprCharacter360Flame.png',
 		Utils.Assets.Images + 'level/characters/sprCharacter360Teleport.png',
+		Utils.Assets.Images + 'level/ui/sprLogo.png',
+		Utils.Assets.Images + 'level/ui/sprLogoBackground.png',
+		Utils.Assets.Images + 'level/ui/sprLogoAnd.png',
 		Utils.Assets.Images + 'level/sprPowerupBar.png',
 		Utils.Assets.Images + 'level/sprPowerupBarSlider.png',
 		Utils.Assets.Images + 'level/sprPowerupBarStretch.png',
@@ -58,6 +61,5 @@ Game.Assets = {
 		Utils.Assets.Images + 'level/sprMinersShield.png',
 		Utils.Assets.Images + 'level/sprRegenMiners.png',
 		Utils.Assets.Images + 'level/sprStabilityShield.png',
-
 	]
 };
