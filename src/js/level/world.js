@@ -136,7 +136,7 @@ var World = function()
     {
         for(var i = 0; i < 1+Math.floor(this.wave*0.05*this.wave*0.75); ++i)
         {
-            StateManager.getState().enemies.push(new Enemy(Math.random()*360,this, Math.random()*100 < 2 ? "big" : "small"));
+            StateManager.getState().enemies.push(new Enemy(Math.random()*360,this, Math.random()*100 < 5 ? "big" : "small"));
             StateManager.getState().enemies[StateManager.getState().enemies.length-1].alpha = 0;
         }
     }

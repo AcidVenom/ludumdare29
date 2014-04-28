@@ -87,6 +87,7 @@ var StabilityBar = function(val)
 	this.textGoblins.__z = 2000;
 	this.textMiners.__z = 2000;
 	this.textWave.__z = 2000;
+
 	this.addChild(this.textGoblins);
 	this.addChild(this.textMiners);
 	this.addChild(this.textWave);
@@ -98,6 +99,22 @@ var UI = function(val)
 	this.criticals = [];
 	this.timer = 0;
 	this.speed = Math.PI/2 + 0.02;
+	this.overlay = new PIXI.Graphics();
+	this.overlay.__z = 1000000;
+	this.deathReason = new PIXI.Text("",{
+		font: "bold 36pt Arial",
+		fill: "#FFFFFF",
+		align: "center"
+	});
+	this.deathReason.__z = 10000000;
+	this.deathReason.alpha = 0;
+	this.deathReason.position.x = 640;
+	this.deathReason.position.y = 360;
+	this.deathReason.anchor.x = 0.5;
+	this.deathReason.anchor.y = 0.5;
+
+	Game.PIXI.Stage.addChild(this.overlay);
+	Game.PIXI.Stage.addChild(this.deathReason);
 
 	this.addCritical = function(angle)
 	{
@@ -134,6 +151,13 @@ var UI = function(val)
 				this.speed = 0;
 			}
 			this.bar.scale.y = Math.sin(this.timer);
+
+			this.overlay.clear();
+			this.overlay.beginFill(0x000000);
+			this.overlay.drawRect(0,0,1280,720);
+			this.overlay.endFill();
+			this.overlay.alpha = 0.8;
+			this.deathReason.alpha = 1;
 		}
 		
 		this.bar.update(data);
