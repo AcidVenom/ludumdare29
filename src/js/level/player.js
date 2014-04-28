@@ -543,10 +543,162 @@ var Player = function(angle, world)
 	Game.PIXI.Camera.addChild(hammer2);
 	Game.PIXI.Camera.addChild(hammer3);
 
+	this.setTexture(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprCharacter360Teleport.png']);
+	var frames = [];
+	for(var i = 0; i < 10; i++)
+	{
+		frames.push({
+			x: i*564,
+            y: 0,
+            width: 564,
+            height: 351
+		});
+	}
+	this.animations.mainSprite = this;
+	this.animations.add("teleport",{
+        frameRate: 0.5,
+        frames: frames,
+        loop: false,
+        reversed: false,
+        cb: function(){ 
+        	var player = StateManager.getState().player;
+        	player.alpha = 0;
+        	player.animations.pause('teleport');
+
+        	for (var i = 0; i < player.attackSprites.length; i++) {
+        		player.attackSprites[i].animations.play('flame');
+        		player.attackSprites[i].alpha = 1;
+        	}
+        }
+	});
+
+	this.attackSprites = [];
+	for (var i = 0; i < 6; i++) {
+		var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprCharacter360Flame.png']),
+			frames = [];
+		sprite.animations = {};
+		sprite.particles = {};
+		extend(sprite.animations, AnimationManager());
+		extend(sprite.particles, ParticleSystem());
+
+		sprite.animations.mainSprite = sprite;
+		sprite.__z = 80000;
+		
+		for(var i2 = 0; i2 < 19; i2++)
+		{
+			frames.push({
+				x: i2*300,
+	            y: 0,
+	            width: 300,
+	            height: 441
+			});
+		}
+
+		sprite.alpha = 0;
+		sprite.angle = i * 60 - 20;
+		sprite.animations.i = i;
+		sprite.radius = this.collisionPoint + 330;
+		sprite.collisionPoint = this.collisionPoint;
+		sprite.rotation = sprite.angle*Math.PI/180+Math.PI/2;
+		sprite.position.x = Math.cos(sprite.angle * Math.PI / 180) * sprite.radius;
+		sprite.position.y = Math.sin(sprite.angle * Math.PI / 180) * sprite.radius;
+		this.attackSprites.push(sprite);
+
+		Game.PIXI.Camera.addChild(sprite);
+		sprite.animations.add("flame",{
+			i: i,
+	        frameRate: 0.5,
+	        frames: frames,
+	        loop: false,
+	        reversed: false,
+	        cb: function () { 
+	        	var sprite = StateManager.getState().player.attackSprites[this.i];
+	        	if (sprite.particles.smashExplosion) {
+					sprite.particles.removeEmitter(sprite.particles.smashExplosion);
+				};
+				sprite.particles.smokeEffects = sprite.particles.createEmitter({
+					parent: Game.PIXI.Camera,
+					texture: PIXI.TextureCache[Utils.Assets.Images + 'level/sprPuff.png'],
+					instantEmitSize: 50,
+					lifetime: 50000000,
+					onParticleInitialization: function (particle) {
+						particle.position = {
+							x: Math.cos(sprite.angle * Math.PI / 180) * (sprite.radius),
+							y: Math.sin(sprite.angle * Math.PI / 180) * (sprite.radius)
+						};
+						particle.pivot.x = 0.5;
+						particle.pivot.y = 0.5;
+						particle.anchor.x = 0.5;
+						particle.anchor.y = 0.5;
+						particle.direction = Math.floor(Math.random()*2);
+						particle.active = true;
+						particle.__z = 5000;
+						particle.angle = sprite.angle - 20 + Math.random()*40;
+						particle.randomRadius = 0;
+						particle.startRadius = sprite.radius + Math.random() * 20 - 300;
+						particle.speed = Math.random();
+						particle.scale.x = 0.4;
+						particle.rotationSpeed = 0.4;
+						particle.fadeSpeed = 0.05;
+						particle.scale.y = 0.4;
+						particle.y = (Math.random() * 50) - 25;
+						particle.velocity = 5+Math.random()*10;
+					},
+					onParticleUpdate: function (particle, data) {
+						particle.rotation += particle.rotationSpeed;
+
+						if(particle.alpha > 0)
+						{
+							particle.alpha -= particle.fadeSpeed;
+						}
+
+						if(particle.direction == 0)
+						{
+							particle.angle += particle.speed;
+						}
+						else
+						{
+							particle.angle -= particle.speed;
+						}
+
+						if(particle.velocity > 0.3)
+						{
+							particle.velocity -= 0.3;
+						}
+						
+						particle.y += particle.velocity;
+
+						particle.scale.x += 0.01;
+						particle.scale.y += 0.01;
+
+						if (particle.alpha <= particle.fadeSpeed)
+						{
+							particle.active = false;
+						}
+
+						particle.position = {
+							x: Math.cos(particle.angle * Math.PI / 180) * (particle.startRadius + particle.y + particle.randomRadius),
+							y: Math.sin(particle.angle * Math.PI / 180) * (particle.startRadius + particle.y + particle.randomRadius)
+						};
+					}
+				});
+				sprite.particles.smokeEffects.__z = 10000;
+
+				StateManager.getState().player._360 = false;
+				StateManager.getState().player.alpha = 1;
+				StateManager.getState().player.animations.play('walk');
+				StateManager.getState().world.createImpact(0, 1500, 100);
+				CameraController.shake(45, 0.02, 20, function () {
+					StateManager.getState().player.cameraUnlocked = false;
+				});
+
+			 	sprite.animations.pause('flame');
+	        }
+		});
+	}
+
 	this.animations.play("walk");
-
 	this.cameraUnlocked = false;
-
 	this.startChain = function()
 	{
 		var chunk1 = new StoneChunk(this,undefined,0,0),
@@ -555,6 +707,10 @@ var Player = function(angle, world)
 
 	this.update = function(data)
 	{
+		for (var i = 0; i < this.attackSprites.length; i++) {
+			this.attackSprites[i].animations.update(data);
+			this.attackSprites[i].particles.update(data);
+		}
 		this.animations.update(data);
 		this.particles.update(data);
 
@@ -705,6 +861,42 @@ var Player = function(angle, world)
 				},500);
 			}
 		}
+		if (Input.isDown("r"))
+		{
+			if (!this.slamming && !this.smashing && !this._180 && !this._360)
+			{
+				this._360 = true;
+				this.animations.play("teleport");
+				this.speed = 0;
+				this.cameraUnlocked = true;
+				TweenLite.to(
+					Game.PIXI.Camera.position,
+					0.5,
+					{
+						x: 640,
+						y: 360,
+						ease: Linear.easeInOut
+					}
+				);
+				TweenLite.to(
+					Game.PIXI.Camera.scale,
+					0.5,
+					{
+						x: 0.62,
+						y: 0.62,
+						ease: Linear.easeInOut
+					}
+				);/*
+				TweenLite.to(
+				Game.PIXI.Camera.scale,
+				2,
+				{
+					x: 0.95,
+					y: 0.95,
+					ease: Linear.easeIn
+				});*/
+			}
+		}
 
 		if ( StateManager.getState().stability < StateManager.getState().maxStability && !this.smashing && !this.slamming && !this._180)
 		{
@@ -718,7 +910,7 @@ var Player = function(angle, world)
 			}				
 		}
 
-		if(!this.slamming && !this.smashing && !this._180)
+		if(!this.slamming && !this.smashing && !this._180 && !this._360)
 		{
 			if(Input.isDown("left"))
 			{
