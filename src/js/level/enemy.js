@@ -1,4 +1,4 @@
-var Enemy = function (angle, world) {
+var Enemy = function (angle, world, type) {
 	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprGoblinWalk.png']);
 
 	this.animations = {};
@@ -9,6 +9,7 @@ var Enemy = function (angle, world) {
 
 	this.setZ(100);
 	this.health = new Healthbar(this);
+	this.enemyType = type || "small";
 
 	this.collisionPoint = 265;
 	this.world = world;
@@ -32,26 +33,57 @@ var Enemy = function (angle, world) {
 
 	var frames = [];
 
-	for(var i = 0; i < 7; i++)
+	if(this.enemyType == "small")
 	{
-		frames.push({
-			x: i*283,
-            y: 0,
-            width: 283,
-            height: 290
+		for(var i = 0; i < 7; i++)
+		{
+			frames.push({
+				x: i*283,
+	            y: 0,
+	            width: 283,
+	            height: 290
+			});
+		}
+
+		this.animations.mainSprite = this;
+		this.animations.add("walk",{
+	        frameRate: 1,
+	        frames: frames,
+	        loop: true,
+	        reversed: false
 		});
+
+		this.maxScale = 0.25;
 	}
+	else
+	{
+		this.setTexture(PIXI.TextureCache[Utils.Assets.Images + 'level/characters/sprGoblinBossWalk.png'])
+		for(var i = 0; i < 16; i++)
+		{
+			frames.push({
+				x: i*226,
+	            y: 0,
+	            width: 226,
+	            height: 218
+			});
+		}
 
-	this.animations.mainSprite = this;
-	this.animations.add("walk",{
-        frameRate: 1,
-        frames: frames,
-        loop: true,
-        reversed: false
-	});
+		this.animations.mainSprite = this;
+		this.animations.add("walk",{
+	        frameRate: 1,
+	        frames: frames,
+	        loop: true,
+	        reversed: false
+		});
 
-	this.scale.x = 0.25;
-	this.scale.y = -0.25;
+		this.maxScale = 0.4;
+		this.health.__health = 500;
+		this.health.__maxHealth = 500;
+	}
+	
+
+	this.scale.x = this.maxScale;
+	this.scale.y = -this.maxScale;
 	this.move = Math.floor(Math.random()*7);
 	this.timer = 0;
 
@@ -188,7 +220,7 @@ var Enemy = function (angle, world) {
 					{
 						if(this.target.miner.radius == this.target.miner.collisionPoint)
 						{
-							this.target.miner.health.__health-=5;
+							this.target.miner.health.__health-= this.enemyType == "small" ? 5 : 20;
 							this.target.miner.radius--;
 							this.target.miner.velocity = -8
 							this.target.miner.tint = 0xFF0000;
@@ -250,12 +282,12 @@ var Enemy = function (angle, world) {
 
 			if(this.speed > 0)
 			{
-				this.scale.x = -0.25;
+				this.scale.x = -this.maxScale;
 				this.health.__graphics.scale.x = -1;
 			}
 			else if(this.speed < 0)
 			{
-				this.scale.x = 0.25;
+				this.scale.x = this.maxScale;
 				this.health.__graphics.scale.x = 1;
 			}
 
