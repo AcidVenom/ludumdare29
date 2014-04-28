@@ -6,12 +6,12 @@ var StabilityBar = function(val)
 	this.anchor.y = 0.5;
 	this.pivot.x = 0.5;
 	this.pivot.y = 0.5;
-	this.__z = 1000;
+	this.__z = 9998;
 
 	sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/ui/sprStabilityBar.png']);
 	sprite.position.x -= 68;
 	sprite.position.y -= 35;
-	sprite.__z = 1001;
+	sprite.__z = 9999;
 	this.addChild(sprite);
 
 	Game.PIXI.Camera.addChild(this);
@@ -69,6 +69,7 @@ var StabilityBar = function(val)
 
 	this.textGoblins.__z = 2000;
 	this.textMiners.__z = 2000;
+	this.textWave.__z = 2000;
 	this.addChild(this.textGoblins);
 	this.addChild(this.textMiners);
 	this.addChild(this.textWave);
@@ -82,4 +83,6 @@ var UI = function(val)
 	{
 		this.bar.update(data);
 	}
+
+	Game.sort();
 }

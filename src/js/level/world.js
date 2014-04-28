@@ -22,6 +22,7 @@ var World = function()
 	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprWorld.png']);
     
     this.lava = new PIXI.DisplayObjectContainer();
+    this.lava.__z = 500;
 
     this.lavaLayer1 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprLava1.png']);
     this.lavaLayer2 = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprLava2.png']);
@@ -43,6 +44,10 @@ var World = function()
     this.lavaLayer2.pivot.y = 0.5;
     this.lavaLayer3.pivot.y = 0.5;
 
+    this.lavaLayer1.__z = 500;
+    this.lavaLayer2.__z = 501;
+    this.lavaLayer3.__z = 502;
+
     this.lava.addChild(this.lavaLayer3);
     this.lava.addChild(this.lavaLayer2);
     this.lava.addChild(this.lavaLayer1);
@@ -50,6 +55,8 @@ var World = function()
 
     this.lava.position.y -= 6;
     this.lava.position.x -= 1;
+
+    this.flares = [];
 
     extend(this, sprite);
     extend(this, GameObject);
@@ -198,6 +205,49 @@ var World = function()
     Game.PIXI.Camera.addChild(this.clouds);
     Game.PIXI.Camera.addChild(this);
     Game.PIXI.Camera.addChild(this.lava);
+
+    this.flares = [];
+
+    for(var i = 0; i < 11; ++i)
+    {
+        var flare = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprFlare' + String(i+1) + '.png']);
+        this.flares.push(flare);
+        flare.__z = 10000;
+        
+        flare.pivot.x = 0.5;
+        flare.pivot.y = 0.5;
+
+        flare.anchor.x = 0.5;
+        flare.anchor.y = 0.5;
+        
+
+        flare.rotation -= Math.PI/2;
+        flare.position.x -= 300;
+        flare.position.y += 300;
+
+        Game.PIXI.Camera.addChild(flare);
+    }
+
+    this.flares[0].position.x += 800;
+    this.flares[0].position.y -= 800;
+    this.flares[0].scale.x = 1.3;
+    this.flares[0].scale.y = 1.3;
+
+    this.flares[1].position.x += 870;
+    this.flares[1].position.y -= 870;
+    this.flares[1].scale.x = 1.5;
+    this.flares[1].scale.y = 1.5;
+    this.flares[1].anchor.x = 0.7;
+    this.flares[1].anchor.y = 0.75;
+    this.flares[1].pivot.x = 0.7;
+    this.flares[1].pivot.y = 0.75;
+
+    for(var i = 2; i < 11; ++i)
+    {
+        this.flares[i].position.x += 300+i*30;
+        this.flares[i].position.y -= 300+i*30;
+    }
+
 
     this.spawnEnemies();
     this.spawnMiners();

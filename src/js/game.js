@@ -84,6 +84,16 @@ var Game = {
             var doSort = function (obj) {
                 if (obj.children) {
                     obj.children.sort(function (a, b) {
+
+                        if(a.__z === undefined)
+                        {
+                            console.error("Could not find Z index for: ", a);
+                        }
+
+                        if(b.__z === undefined)
+                        {
+                            console.error("Could not find Z index for: ", b);
+                        }
                         return a.__z - b.__z;
                     });
 

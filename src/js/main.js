@@ -34,10 +34,10 @@ function main()
 			this.ui = null;
     		this.hotspotMiners = Math.random() * 90;
     		this.hotspotEnemies = Math.random() * 90 + 180;
+    		this.redOverlay = new Overlay();
+    		this.player = new Player(Math.random() * 360, this.world);
+    		this.ui = new UI(this.stability);
 			this.world = new World();
-			this.redOverlay = new Overlay();
-			this.player = new Player(Math.random() * 360, this.world);
-			this.ui = new UI(this.stability);
 
 			var Filter = function()
 			{
@@ -47,8 +47,8 @@ function main()
 			 
 			    // set the uniforms
 			    this.uniforms = {
-			    	exposure: {type: '1f', value: -0.35},
-			    	saturation: {type: '1f', value: -0.35}
+			    	exposure: {type: '1f', value: 0},
+			    	saturation: {type: '1f', value: 0}
 			    };
 			 
 			 
@@ -80,6 +80,7 @@ function main()
 
 			Game.PIXI.Camera.filters = filters;
 			Game.PIXI.Camera.addChild(this.world.clouds);
+			Game.sort();
 		},
 		update: function(data) {
 			this.player.update(data);

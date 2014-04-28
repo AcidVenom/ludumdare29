@@ -33,6 +33,17 @@ Game.Assets = {
 		Utils.Assets.Images + 'level/sprLava1.png',
 		Utils.Assets.Images + 'level/sprLava2.png',
 		Utils.Assets.Images + 'level/sprLava3.png',
-		Utils.Assets.Images + 'level/sprRedGlow.png'
+		Utils.Assets.Images + 'level/sprRedGlow.png',
+		Utils.Assets.Images + 'level/sprFlare1.png',
+		Utils.Assets.Images + 'level/sprFlare2.png',
+		Utils.Assets.Images + 'level/sprFlare3.png',
+		Utils.Assets.Images + 'level/sprFlare4.png',
+		Utils.Assets.Images + 'level/sprFlare5.png',
+		Utils.Assets.Images + 'level/sprFlare6.png',
+		Utils.Assets.Images + 'level/sprFlare7.png',
+		Utils.Assets.Images + 'level/sprFlare8.png',
+		Utils.Assets.Images + 'level/sprFlare9.png',
+		Utils.Assets.Images + 'level/sprFlare10.png',
+		Utils.Assets.Images + 'level/sprFlare11.png',
 	]
 };
