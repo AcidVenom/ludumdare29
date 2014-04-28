@@ -9,7 +9,8 @@ require(
 		"gameobject.js",
 		"level/cameracontroller.js",
 		"level/ui.js",
-		"level/particlesystem.js"
+		"level/particlesystem.js",
+		"level/overlay.js"
 	], main);
 
 function main()
@@ -33,6 +34,7 @@ function main()
     		this.hotspotMiners = Math.random() * 90;
     		this.hotspotEnemies = Math.random() * 90 + 180;
 			this.world = new World();
+			this.redOverlay = new Overlay();
 			this.player = new Player(Math.random() * 360, this.world);
 			this.ui = new UI(this.stability);
 
@@ -40,6 +42,7 @@ function main()
 		},
 		update: function(data) {
 			this.player.update(data);
+			this.redOverlay.update(data);
 
 			if (Input.isDown('b')) {
 				this.myPartEmitter.position.x -= 1;
