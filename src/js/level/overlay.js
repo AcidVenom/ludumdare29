@@ -1,9 +1,11 @@
 var Overlay = function () {
 	var sprite = new PIXI.Sprite(PIXI.TextureCache[Utils.Assets.Images + 'level/sprRedGlow.png']);
 
-	sprite.__z = 55302000000;
+	sprite.__z = 999;
 	var time = 0,
-		sin = 0;
+		sin = 0,
+		speed = 10,
+		angle = 0;
 	sprite.position.x = 0;
 	sprite.position.y = 0;
 	sprite.pivot.x = 0.5;
@@ -15,13 +17,13 @@ var Overlay = function () {
 		var remainder = (StateManager.getState().maxStability - StateManager.getState().stability) / StateManager.getState().maxStability,
 			percentage = StateManager.getState().stability / StateManager.getState().maxStability;
 		
-		time++;
-		if (remainder <= 0.95) {
-			sin = Math.abs(Math.sin(time / (10 * percentage)));
-		} else if (sin !== 1) {
-			sin = 1;
+		time += 0.5;
+
+		if (remainder >= 0.7) {
+			sprite.alpha = Math.abs(Math.sin(time / 8));
+		} else {
+			sprite.alpha = remainder;
 		}
-		sprite.alpha = sin;
 	};
 
 	Game.PIXI.Camera.addChild(sprite);
